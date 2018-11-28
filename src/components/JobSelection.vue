@@ -11,6 +11,12 @@
       </select>
     </div>
     <div>
+      <label>Context:</label>
+      <select v-model="selectedContext">
+        <option v-for="(context, index) in contexts" v-bind:key="index" :value="context">{{context}}</option>
+      </select>
+    </div>
+    <div>
       <label>Table:</label>
       <input v-model="table">
     </div>
@@ -36,8 +42,10 @@ export default {
   data() {
     return {
       analyzers: [],
-      selectedAnalyzer: "",
+      contexts: ["jdbc", "spark"],
       jobs: [],
+      selectedAnalyzer: "",
+      selectedContext: "jdbc",
       table: "food_des",
       column: "fat_factor"
     };
@@ -46,7 +54,7 @@ export default {
     startJob: function() {
       axios
         .post(`http://localhost:8080/api/jobs/${this.selectedAnalyzer}/start`, {
-          context: "jdbc",
+          context: this.selectedContext,
           table: this.table,
           column: this.column
         })

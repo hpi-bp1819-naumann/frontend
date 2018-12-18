@@ -54,21 +54,21 @@
       <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasInstance">
         <md-field>
           <label>Instance</label>
-          <!--<md-input v-model="column" spellcheck="false"></md-input>-->
+          <md-input v-model="selectedAnalyzer.instance" spellcheck="false"></md-input>
         </md-field>
       </div>
 
       <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasPredicate">
         <md-field>
           <label>Predicate</label>
-          <!--<md-input v-model="column" spellcheck="false"></md-input>-->
+          <md-input v-model="selectedAnalyzer.predicate" spellcheck="false"></md-input>
         </md-field>
       </div>
 
       <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasPattern">
         <md-field>
           <label>Pattern</label>
-          <!--<md-input v-model="column" spellcheck="false"></md-input>-->
+          <md-input v-model="selectedAnalyzer.pattern" spellcheck="false"></md-input>
         </md-field>
       </div>
     </div>
@@ -145,7 +145,10 @@
             context: this.selectedAnalyzer.context,
             table: this.selectedAnalyzer.table,
             column: this.selectedAnalyzer.column,
-            where: 'fat_factor < 9',
+            where: this.selectedAnalyzer.where,
+            instance: this.selectedAnalyzer.instance,
+            predicate: this.selectedAnalyzer.predicate,
+            pattern: this.selectedAnalyzer.pattern,
           })
           .then(response => this.jobs.push(response.data));
       },
@@ -171,7 +174,6 @@
   .job-selection {
     padding: 20px;
   }
-
 
   #pending {
     margin-top: 20px;

@@ -1,17 +1,12 @@
 <template>
-  <div id="app" >
-    <JobSelection/>
+  <div id="app">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import JobSelection from "./components/JobSelection";
-
 export default {
-  name: "app",
-  components: {
-    JobSelection
-  }
+  name: "app"
 };
 </script>
 
@@ -21,5 +16,4 @@ export default {
   /*color: #2c3e50;*/
   margin: 20px;
 }
-
 </style>

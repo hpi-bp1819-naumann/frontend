@@ -18,7 +18,7 @@
     </div >
 
     <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.hasContext">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasContext">
         <md-field>
           <label>Context</label>
           <md-select v-model="selectedAnalyzer.context">
@@ -130,7 +130,7 @@
           let hasString = 'has' + String(option.name)[0].toUpperCase() + String(option.name).slice(1);
           this.selectedAnalyzer.options[hasString] = true;
         }
-        console.log(this.selectedAnalyzer);
+        console.log("selected Analyzer: ", this.selectedAnalyzer);
       }
     },
 

@@ -18,54 +18,54 @@
     </div >
 
     <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.context">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.hasContext">
         <md-field>
           <label>Context</label>
-          <md-select v-model="selectedContext">
+          <md-select v-model="selectedAnalyzer.context">
             <md-option v-for="(context, index) in contexts" :key="index" :value="context">{{context}}</md-option>
           </md-select>
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.table">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasTable">
         <md-field>
           <label>Tablename</label>
-          <md-input v-model="table" spellcheck="false"></md-input>
+          <md-input v-model="selectedAnalyzer.table" spellcheck="false"></md-input>
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.column">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasColumn">
         <md-field>
           <label>Columnname</label>
-          <md-input v-model="column" spellcheck="false"></md-input>
+          <md-input v-model="selectedAnalyzer.column" spellcheck="false"></md-input>
         </md-field>
       </div>
     </div>
 
     <div class="md-layout md-gutter">
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.where">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasWhere">
         <md-field>
           <label>WHERE</label>
-          <!--<md-input v-model="column" spellcheck="false"></md-input>-->
+          <md-input v-model="selectedAnalyzer.where" spellcheck="false"></md-input>
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.instance">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasInstance">
         <md-field>
           <label>Instance</label>
           <!--<md-input v-model="column" spellcheck="false"></md-input>-->
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.predicate">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasPredicate">
         <md-field>
           <label>Predicate</label>
           <!--<md-input v-model="column" spellcheck="false"></md-input>-->
         </md-field>
       </div>
 
-      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.pattern">
+      <div class="md-layout-item md-size-20" v-if="selectedAnalyzer.options.hasPattern">
         <md-field>
           <label>Pattern</label>
           <!--<md-input v-model="column" spellcheck="false"></md-input>-->
@@ -108,23 +108,27 @@
         analyzers: [],
         contexts: ["jdbc", "spark"],
         jobs: [],
-        selectedAnalyzer: {},
+        selectedAnalyzer: {
+          context: "jdbc",
+          table: "food_des",
+          column: "fat_factor",
+          where: null,
+          options: {},
+        },
         selectedAnalyzerIndex: null,
-        selectedContext: "jdbc",
-        table: "food_des",
-        column: "fat_factor",
         results: [],
       };
     },
 
     watch: {
       selectedAnalyzerIndex: function () {
-        this.selectedAnalyzer = {
-          name: this.analyzers[this.selectedAnalyzerIndex].name,
-          key: this.analyzers[this.selectedAnalyzerIndex].key,
-        };
+        this.selectedAnalyzer.name = this.analyzers[this.selectedAnalyzerIndex].name;
+        this.selectedAnalyzer.key = this.analyzers[this.selectedAnalyzerIndex].key;
+
+        this.selectedAnalyzer.options = {};
         for (let option of this.analyzers[this.selectedAnalyzerIndex].parameters) {
-          this.selectedAnalyzer[option.name] = true;
+          let hasString = 'has' + String(option.name)[0].toUpperCase() + String(option.name).slice(1);
+          this.selectedAnalyzer.options[hasString] = true;
         }
         console.log(this.selectedAnalyzer);
       }
@@ -133,16 +137,15 @@
     methods: {
       startJob: function () {
 
-        console.log("selectedAnalyzer: ", this.selectedAnalyzer.name);
-        console.log("context: ", this.selectedContext);
-        console.log("table: ", this.table);
-        console.log("column: ", this.column);
+        console.log("starting job");
+        console.log(this.selectedAnalyzer);
 
         axios
           .post(`http://localhost:8080/api/jobs/${this.selectedAnalyzer.key}/start`, {
-            context: this.selectedContext,
-            table: this.table,
-            column: this.column
+            context: this.selectedAnalyzer.context,
+            table: this.selectedAnalyzer.table,
+            column: this.selectedAnalyzer.column,
+            where: 'fat_factor < 9',
           })
           .then(response => this.jobs.push(response.data));
       },

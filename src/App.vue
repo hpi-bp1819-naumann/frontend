@@ -1,16 +1,19 @@
 <template>
   <div id="app" >
     <JobSelection/>
+    <DatabaseView/>
   </div>
 </template>
 
 <script>
 import JobSelection from "./components/JobSelection";
+import DatabaseView from "./components/DatabaseView";
 
 export default {
   name: "app",
   components: {
-    JobSelection
+    JobSelection,
+    DatabaseView
   }
 };
 </script>

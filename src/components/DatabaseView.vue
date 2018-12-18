@@ -21,7 +21,7 @@
             <div v-for="(item, index) in columns[selectedTable]"
                           :value="item"
                           :key="index">
-                <span>{{ item }}</span>
+                <span>{{ item.name }} ({{item.datatype}})</span>
             </div>
           </ul>
         </div>
@@ -41,11 +41,19 @@
       return {
         json: { tables: [
             { table: "firsttable", 
-              columns: [ "firstcolumn1", "firstcolumn2", "firstcolumn3" ] }, 
+              columns: [ 
+                {name: "firstcolumn1", datatype: "int"}, 
+                {name: "firstcolumn2", datatype: "string"},
+                {name: "firstcolumn3", datatype: "int"} ] }, 
             { table: "secondtable", 
-              columns: [ "secondcolumn1", "secondcolumn2", "secondcolumn3", "secondcolumn4" ] }, 
+              columns: [
+                {name: "secondcolumn1", datatype: "int"}, 
+                {name: "secondcolumn2", datatype: "string"},
+                {name: "secondcolumn3", datatype: "int"},
+                {name: "secondcolumn4", datatype: "int"} ] },
             { table: "thirdtable",
-              columns: [ "thirdcolumn1" ] } 
+              columns: [ 
+                {name: "thirdcolumn4", datatype: "int"} ] }
           ] },
         tables: [],
         selectedTable: "",

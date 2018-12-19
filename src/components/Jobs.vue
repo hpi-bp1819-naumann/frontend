@@ -1,40 +1,46 @@
 <template>
   <div>
     <div class="md-display-2" id="pending">Pending Jobs</div>
-
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-size-80">
-        <md-list>
+        <md-list class="custom-md-list">
           <md-list-item v-for="(job, index) in runningJobs" :key="index">
             <span class="md-list-item-text">{{index + 1}}.</span>
             <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
+            <span class="md-list-item-text">{{index + 1}}. {{job.id}}</span>
+
+            <span v-if="job.result">{{job.result}}</span>
           </md-list-item>
         </md-list>
       </div>
     </div>
 
-    <div class="md-display-2" id="pending">Finished Jobs</div>
-
+    <div class="md-display-2" id="finished">Finished Jobs</div>
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-size-80">
-        <md-list>
+        <md-list class="custom-md-list">
           <md-list-item v-for="(job, index) in completedJobs" :key="index">
             <span class="md-list-item-text">{{index + 1}}.</span>
             <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
             <span class="md-list-item-text" v-if="job.result">Result: {{job.result.value}}</span>
             <md-button
-              @click="$router.push(`/jobs/${job.id}`)"
-              class="md-dense md-raised"
-            >View Details</md-button>
+              @click="visitToJobDetails(job.id)"
+              class="md-dense md-raised">
+              View Details
+            </md-button>
+            <md-button class="md-icon-button" @click="deleteJob(index)">
+              <i class="fas fa-trash"></i>
+            </md-button>
           </md-list-item>
         </md-list>
+        <md-button @click="deleteAllJobs">Delete all finished Jobs</md-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+  import axios from "axios";
 
 export default {
   name: "Jobs",
@@ -57,7 +63,7 @@ export default {
             job.startingTime = new Date(job.startingTime);
             return job;
           })
-          .sort(function(a, b) {
+          .sort(function (a, b) {
             return b.startingTime - a.startingTime;
           });
         this.completedJobs = jobs
@@ -66,11 +72,27 @@ export default {
             job.finishingTime = new Date(job.finishingTime);
             return job;
           })
-          .sort(function(a, b) {
+          .sort(function (a, b) {
             return b.finishingTime - a.finishingTime;
           });
       });
-    }
-  }
-};
+    },
+    deleteJob(index){
+      this.completedJobs.splice(index, 1);
+    },
+    deleteAllJobs(){
+      this.completedJobs = [];
+    },
+    visitToJobDetails(jobId){
+      let routeData = this.$router.resolve({name: '/jobs/${jobId}'});
+      window.open(routeData.href, '_blank');
+    },
+  },
+}
 </script>
+
+<style>
+  .custom-md-list {
+    background-color: transparent !important;
+  }
+</style>

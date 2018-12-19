@@ -8,13 +8,12 @@
             <!--<span class="md-list-item-text">{{index + 1}}.</span>-->
             <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
             <span class="md-list-item-text">{{index + 1}}. {{job.id}}</span>
-
+            
             <span v-if="job.result">{{job.result}}</span>
           </md-list-item>
         </md-list>
       </div>
     </div>
-
 
     <div class="md-display-2" id="finished">Finished Jobs</div>
     <div class="md-layout md-gutter">
@@ -23,14 +22,10 @@
           <md-list-item v-for="(job, index) in completedJobs" :key="index">
             <!--<span class="md-list-item-text">{{index + 1}}.</span>-->
             <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
-
+            
             <span v-if="job.result.hasOwnProperty('exception')" class="md-list-item-text">Error</span>
             <span v-else-if="job.result" class="md-list-item-text">Result: {{job.result.value}}</span>
-            <md-button
-              @click="visitToJobDetails(job.id)"
-              class="md-dense md-raised">
-              View Details
-            </md-button>
+            <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
             <md-button class="md-icon-button" @click="deleteJob(job.id, index)">
               <i class="fas fa-trash"></i>
             </md-button>
@@ -43,7 +38,7 @@
 </template>
 
 <script>
-  import axios from "axios";
+import axios from "axios";
 
 export default {
   name: "Jobs",
@@ -66,7 +61,7 @@ export default {
             job.startingTime = new Date(job.startingTime);
             return job;
           })
-          .sort(function (a, b) {
+          .sort(function(a, b) {
             return b.startingTime - a.startingTime;
           });
         this.completedJobs = jobs
@@ -75,32 +70,35 @@ export default {
             job.finishingTime = new Date(job.finishingTime);
             return job;
           })
-          .sort(function (a, b) {
+          .sort(function(a, b) {
             return b.finishingTime - a.finishingTime;
           });
       });
     },
-    deleteJob(jobId, index){
-      axios.delete('http://localhost:8080/api/jobs/' + jobId);
+    deleteJob(jobId, index) {
+      axios.delete("http://localhost:8080/api/jobs/" + jobId);
       this.completedJobs.splice(index, 1);
     },
-    deleteAllJobs(){
+    deleteAllJobs() {
       console.log("completedJobs.length: " + this.completedJobs.length);
-      for(let i = 0; i<this.completedJobs.length; i++){
-        axios.delete('http://localhost:8080/api/jobs/' + this.completedJobs[i].id);
+      for (let i = 0; i < this.completedJobs.length; i++) {
+        axios.delete(
+          "http://localhost:8080/api/jobs/" + this.completedJobs[i].id
+        );
       }
       this.completedJobs = [];
     },
-    visitToJobDetails(jobId){
-      let routeData = this.$router.resolve({name: '/jobs/${jobId}'});
-      window.open(routeData.href, '_blank');
-    },
-  },
-}
+    visitToJobDetails(jobId) {
+      // let routeData = this.$router.resolve({ name: `/jobs/${jobId}` });
+      // window.open(routeData.href, "_blank");
+      this.$router.push(`/jobs/${jobId}`);
+    }
+  }
+};
 </script>
 
 <style>
-  .custom-md-list {
-    background-color: transparent !important;
-  }
+.custom-md-list {
+  background-color: transparent !important;
+}
 </style>

@@ -2,31 +2,30 @@
   <div class="db-view md-elevation-1">
 
     <div class="md-display-2">Database View</div>
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-15">
-          <md-field>
-            <label>Tables</label>
-            <md-select v-model="selectedTable">
-              <md-option v-for="(item, index) in tables"
-                       :value="item.table"
-                       :key="index">
-                {{ item.table }}
-              </md-option>
-            </md-select>
-          </md-field>
-        </div>
 
-        <div class="md-layout-item md-size-15">
-          <ul class="mdc-list">
-            <div v-for="(item, index) in columns[selectedTable]"
-                          :value="item"
-                          :key="index">
-                <span>{{ item.name }} ({{item.datatype}})</span>
-            </div>
-          </ul>
-        </div>
+    <div class="md-layout md-gutter">
 
+      <div class="md-layout-item md-size-15">
+        <md-field>
+          <label>Tables</label>
+          <md-select v-model="selectedTable">
+            <md-option v-for="(item, index) in tables"
+                      :value="item.table"
+                      :key="index">
+              {{ item.table }}
+            </md-option>
+          </md-select>
+        </md-field>
       </div>
+
+      <md-table v-model="columns[selectedTable]" md-card>>
+              <md-table-row slot="md-table-row" slot-scope="{ item }">
+          <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
+          <md-table-cell md-label="Datatype">{{item.datatype}}</md-table-cell>
+        </md-table-row>
+      </md-table>
+
+    </div>
 
   </div>
 </template>
@@ -62,15 +61,16 @@
       };
     },
     mounted() {
+      //api/<tablename>/data
+      axios.get("http://localhost:8080/api/db/tables").then(response => {
+        //this.json = response.data;
         this.tables = this.json.tables;
         this.json.tables.forEach(currTable =>{
           this.columns[currTable.table] = currTable.columns;
         })
         this.selectedTable = this.tables[0].table;
         this.selectedColumn = this.columns[selectedTable][0];
-      /*axios.get("http://localhost:8080/api/db/tables").then(response => {
-        
-      });*/
+      });
     }
   };
 </script>

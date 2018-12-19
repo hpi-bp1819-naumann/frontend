@@ -4,14 +4,19 @@
     <md-list>
       <md-list-item>{{this.job.id}}</md-list-item>
       <md-list-item>Status: {{this.job.status}}</md-list-item>
-      <md-list-item>Started: {{this.job.startingTime}}</md-list-item>
-      <md-list-item v-if="job.status === 'completed'">Finished: {{this.job.finishingTime}}</md-list-item>
+      <md-list-item>Started: {{this.job.startingTime.toLocaleString()}}</md-list-item>
+      <md-list-item
+        v-if="job.status === 'completed'"
+      >Finished: {{this.job.finishingTime.toLocaleString()}}</md-list-item>
       <md-list-item
         v-if="job.status === 'completed'"
       >Duration: {{msToTime(this.job.finishingTime - this.job.startingTime)}}</md-list-item>
       <div v-if="job.status === 'completed'">
         <!-- hacky way to distingush between Histogram and others -->
-        <md-list-item v-if="job.result.value.values">Histogram</md-list-item>
+        <div v-if="job.result.value.values">
+          <br>
+          <histogram :frequencies="job.result.value.values"></histogram>
+        </div>
         <md-list-item v-else>Result: {{this.job.result.value}}</md-list-item>
       </div>
     </md-list>
@@ -20,6 +25,7 @@
 
 <script>
 import axios from "axios";
+import Histogram from "./Histogram";
 
 export default {
   name: "Job",
@@ -34,7 +40,9 @@ export default {
       }
     };
   },
-
+  components: {
+    histogram: Histogram
+  },
   created() {
     this.fetchData();
   },

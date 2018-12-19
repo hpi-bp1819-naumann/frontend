@@ -7,7 +7,7 @@
         <md-field>
           <label>Analyzer</label>
           <md-select v-model="selectedAnalyzerIndex">
-            <md-option v-for="(analyzer, index) in analyzers" :value="index">{{analyzer.name}}</md-option>
+            <md-option v-for="(analyzer, index) in analyzers" :value="index" :key="index">{{analyzer.name}}</md-option>
           </md-select>
         </md-field>
       </div>

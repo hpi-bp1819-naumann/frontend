@@ -6,9 +6,8 @@
       <div class="md-layout-item md-size-80">
         <md-list>
           <md-list-item v-for="(job, index) in runningJobs" :key="index">
-            <span class="md-list-item-text">{{index + 1}}. {{job.id}}</span>
-            <md-button @click="checkResult(job.id, index)" class="md-dense md-raised">Get Result</md-button>Result:
-            <span v-if="job.result">{{job.result}}</span>
+            <span class="md-list-item-text">{{index + 1}}.</span>
+            <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
           </md-list-item>
         </md-list>
       </div>
@@ -20,8 +19,9 @@
       <div class="md-layout-item md-size-80">
         <md-list>
           <md-list-item v-for="(job, index) in completedJobs" :key="index">
-            <span class="md-list-item-text">{{index + 1}}. {{job.id}}</span>
-            <span v-if="job.result">Result: {{job.result.value}}</span>
+            <span class="md-list-item-text">{{index + 1}}.</span>
+            <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
+            <span class="md-list-item-text" v-if="job.result">Result: {{job.result.value}}</span>
             <md-button
               @click="$router.push(`/jobs/${job.id}`)"
               class="md-dense md-raised"
@@ -51,8 +51,24 @@ export default {
     refresh() {
       axios.get("http://localhost:8080/api/jobs").then(response => {
         const jobs = response.data.jobs;
-        this.runningJobs = jobs.filter(job => job.status === "running");
-        this.completedJobs = jobs.filter(job => job.status === "completed");
+        this.runningJobs = jobs
+          .filter(job => job.status === "running")
+          .map(job => {
+            job.startingTime = new Date(job.startingTime);
+            return job;
+          })
+          .sort(function(a, b) {
+            return b.startingTime - a.startingTime;
+          });
+        this.completedJobs = jobs
+          .filter(job => job.status === "completed")
+          .map(job => {
+            job.finishingTime = new Date(job.finishingTime);
+            return job;
+          })
+          .sort(function(a, b) {
+            return b.finishingTime - a.finishingTime;
+          });
       });
     }
   }

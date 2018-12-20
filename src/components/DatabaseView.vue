@@ -25,7 +25,15 @@
         </md-table-row>
       </md-table>
 
+      <md-table v-model="firstRows" md-card>>
+              <md-table-row slot="md-table-row" slot-scope="{ item }">
+          <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
+          <md-table-cell md-label="Datatype">{{item.datatype}}</md-table-cell>
+        </md-table-row>
+      </md-table>
+
     </div>
+
 
   </div>
 </template>
@@ -39,38 +47,48 @@
     data() {
       return {
         json: { tables: [
-            { table: "firsttable", 
+            { table: "food_des", 
               columns: [ 
                 {name: "firstcolumn1", datatype: "int"}, 
                 {name: "firstcolumn2", datatype: "string"},
                 {name: "firstcolumn3", datatype: "int"} ] }, 
-            { table: "secondtable", 
+            { table: "testdata", 
               columns: [
                 {name: "secondcolumn1", datatype: "int"}, 
                 {name: "secondcolumn2", datatype: "string"},
                 {name: "secondcolumn3", datatype: "int"},
                 {name: "secondcolumn4", datatype: "int"} ] },
-            { table: "thirdtable",
+            { table: "testcorrelation",
               columns: [ 
                 {name: "thirdcolumn4", datatype: "int"} ] }
           ] },
         tables: [],
         selectedTable: "",
         columns: {},
-        selectedColumn: "",
+        firstRows: {}
       };
+    },
+    watch: {
+      selectedTable: function () {
+        console.log(this.selectedTable);
+        axios.get("http://localhost:8080/api/db/" + this.selectedTable + "/data").then(response =>{
+            this.firstRows = response.data;
+        })
+      }
     },
     mounted() {
       //api/<tablename>/data
-      axios.get("http://localhost:8080/api/db/tables").then(response => {
+      //axios.get("http://localhost:8080/api/db/tables").then(response => {
         //this.json = response.data;
         this.tables = this.json.tables;
         this.json.tables.forEach(currTable =>{
           this.columns[currTable.table] = currTable.columns;
         })
         this.selectedTable = this.tables[0].table;
-        this.selectedColumn = this.columns[selectedTable][0];
-      });
+        axios.get("http://localhost:8080/api/db/" + this.selectedTable + "/data").then(response =>{
+            this.firstRows = response.data;
+        })
+      //});
     }
   };
 </script>
@@ -86,6 +104,10 @@
 
   #pending {
     margin-top: 20px;
+  }
+
+  .md-table {
+    max-width: 40%;
   }
 
 </style>

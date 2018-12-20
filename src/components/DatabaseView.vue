@@ -34,6 +34,7 @@
 
     </div>
 
+{{firstRows}}
 
   </div>
 </template>
@@ -70,8 +71,7 @@
     },
     watch: {
       selectedTable: function () {
-        console.log(this.selectedTable);
-        axios.get("http://localhost:8080/api/db/" + this.selectedTable + "/data").then(response =>{
+        axios.get("http://localhost:8080/api/db/data/" + this.selectedTable).then(response =>{
             this.firstRows = response.data;
         })
       }
@@ -85,7 +85,7 @@
           this.columns[currTable.table] = currTable.columns;
         })
         this.selectedTable = this.tables[0].table;
-        axios.get("http://localhost:8080/api/db/" + this.selectedTable + "/data").then(response =>{
+        axios.get("http://localhost:8080/api/db/data/" + this.selectedTable).then(response =>{
             this.firstRows = response.data;
         })
       //});

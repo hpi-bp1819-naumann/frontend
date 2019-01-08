@@ -1,37 +1,43 @@
 <template>
   <div>
-    <div class="md-display-2" id="pending">Pending Jobs</div>
-    <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-80">
-        <md-list class="custom-md-list">
-          <md-list-item v-for="(job, index) in runningJobs" :key="index">
-            <!--<span class="md-list-item-text">{{index + 1}}.</span>-->
-            <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
-            <span class="md-list-item-text">{{index + 1}}. {{job.id}}</span>
-            
-            <span v-if="job.result">{{job.result}}</span>
-          </md-list-item>
-        </md-list>
+    <div v-if="runningJobs.length > 0">
+      <div class="md-display-2" id="pending">Running Jobs</div>
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-size-80">
+          <md-list class="custom-md-list">
+            <md-list-item v-for="(job, index) in runningJobs" :key="index">
+              <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
+              <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
+            </md-list-item>
+          </md-list>
+        </div>
       </div>
     </div>
 
-    <div class="md-display-2" id="finished">Finished Jobs</div>
-    <div class="md-layout md-gutter">
-      <div class="md-layout-item md-size-80">
-        <md-list class="custom-md-list">
-          <md-list-item v-for="(job, index) in completedJobs" :key="index">
-            <!--<span class="md-list-item-text">{{index + 1}}.</span>-->
-            <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
-            
-            <span v-if="job.result.hasOwnProperty('exception')" class="md-list-item-text">Error</span>
-            <span v-else-if="job.result" class="md-list-item-text">Result: {{job.result.value}}</span>
-            <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
-            <md-button class="md-icon-button" @click="deleteJob(job.id, index)">
-              <i class="fas fa-trash"></i>
-            </md-button>
-          </md-list-item>
-        </md-list>
-        <md-button @click="deleteAllJobs">Delete all finished Jobs</md-button>
+    <div v-if="completedJobs.length > 0">
+      <div class="md-display-2" id="completed">Completed Jobs</div>
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-size-80">
+          <md-list class="custom-md-list">
+            <md-list-item v-for="(job, index) in completedJobs" :key="index">
+              <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
+              <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
+              
+              <span v-if="job.result.hasOwnProperty('exception')" class="md-list-item-text">Error</span>
+              <span
+                v-else-if="job.name !== 'Histogram' && job.name !== 'DataType'"
+                class="md-list-item-text"
+              >Result: {{job.result.value}}</span>
+              <span v-else class="md-list-item-text">Result: too long</span>
+
+              <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
+              <md-button class="md-icon-button" @click="deleteJob(job.id, index)">
+                <i class="fas fa-trash"></i>
+              </md-button>
+            </md-list-item>
+          </md-list>
+          <md-button @click="deleteAllJobs">Delete all finished Jobs</md-button>
+        </div>
       </div>
     </div>
   </div>
@@ -50,11 +56,11 @@ export default {
   },
   mounted() {
     this.refresh();
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       window.setInterval(() => {
         this.refreshIfNeccessary();
-      },3000);
-    })
+      }, 3000);
+    });
   },
   methods: {
     refresh() {
@@ -80,13 +86,13 @@ export default {
           });
       });
     },
-    refreshIfNeccessary(){
-      if(this.runningJobs.length > 0){
+    refreshIfNeccessary() {
+      if (this.runningJobs.length > 0) {
         this.refresh();
       }
     },
-    deleteJob(jobId, index){
-      axios.delete('http://localhost:8080/api/jobs/' + jobId);
+    deleteJob(jobId, index) {
+      axios.delete("http://localhost:8080/api/jobs/" + jobId);
       this.completedJobs.splice(index, 1);
     },
     deleteAllJobs() {
@@ -98,16 +104,20 @@ export default {
       }
       this.completedJobs = [];
     },
-    visitToJobDetails(jobId){
-      this.$router.push('/jobs/'+jobId);
-    },
-  },
+    visitToJobDetails(jobId) {
+      this.$router.push("/jobs/" + jobId);
+    }
+  }
 };
-
 </script>
 
 <style>
 .custom-md-list {
   background-color: transparent !important;
+}
+
+#pending,
+#completed {
+  margin-top: 20px;
 }
 </style>

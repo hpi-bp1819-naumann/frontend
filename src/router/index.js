@@ -3,6 +3,7 @@ import Router from "vue-router";
 import DashBoard from "../components/DashBoard";
 import JobSelection from "../components/JobSelection";
 import Job from "../components/Job";
+import DatabaseView from "../components/DatabaseView";
 
 Vue.use(Router);
 
@@ -12,6 +13,10 @@ export default new Router({
     {
       path: "/dashboard",
       component: DashBoard
+    },
+    {
+      path: "/dbview",
+      component: DatabaseView
     },
     {
       path: "/jobs",

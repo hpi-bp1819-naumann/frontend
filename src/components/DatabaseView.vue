@@ -19,22 +19,34 @@
       </div>
 
       <md-table v-model="columns[selectedTable]" md-card>>
-              <md-table-row slot="md-table-row" slot-scope="{ item }">
-          <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
-          <md-table-cell md-label="Datatype">{{item.datatype}}</md-table-cell>
+          <md-table-row slot="md-table-row" slot-scope="{ item }">
+            <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
+            <md-table-cell md-label="Datatype">{{item.datatype}}</md-table-cell>
         </md-table-row>
       </md-table>
 
-      <md-table v-model="firstRows" md-card>>
-              <md-table-row slot="md-table-row" slot-scope="{ item }">
-          <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
-          <md-table-cell md-label="Datatype">{{item.datatype}}</md-table-cell>
-        </md-table-row>
-      </md-table>
+      <div>
+        <md-table>
+          <md-table-row>
+            <md-table-head v-for="(item, index) in firstRows.metaData.columns"
+                    :value="item.name"
+                    :key="index">
+                    {{item.name}}
+            </md-table-head>
+          </md-table-row>
+          <md-table-row v-for="(row, index) in firstRows.rows"
+                    :value="row"
+                    :key="index">
+              <md-table-cell v-for="(cell, index) in row"
+                      :value="cell"
+                      :key="index">
+                      {{cell}}
+              </md-table-cell>
+            </md-table-row>
+        </md-table>
+      </div>
 
     </div>
-
-{{firstRows}}
 
   </div>
 </template>
@@ -66,7 +78,8 @@
         tables: [],
         selectedTable: "",
         columns: {},
-        firstRows: {}
+        firstRows: {},
+        test: ["column", "type"]
       };
     },
     watch: {
@@ -107,7 +120,7 @@
   }
 
   .md-table {
-    max-width: 40%;
+    max-width: 96%;
   }
 
 </style>

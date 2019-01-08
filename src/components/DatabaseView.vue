@@ -25,6 +25,10 @@
       </div>
 
       <div class="md-layout-item md-size-80">
+        <md-field>
+          Database: {{database.db}} <br>
+          JDBC-Version: {{jdbcversion.jdbc}}
+        </md-field>
         <md-table md-card>
           <md-table-row>
             <md-table-head v-for="(item, index) in firstRows.metaData.columns"
@@ -59,7 +63,9 @@
       return {
         tables: [],
         selectedTable: "",
-        firstRows: {}
+        firstRows: {},
+        database: "",
+        jdbcversion: ""
       };
     },
     watch: {
@@ -76,6 +82,12 @@
         this.tables = response.data.tables;
         this.selectedTable = this.tables[4];
       });
+      axios.get("http://localhost:8080/api/db/version/db").then(response => {
+        this.database = response.data;
+      });
+      axios.get("http://localhost:8080/api/db/version/jdbc").then(response => {
+        this.jdbcversion = response.data;
+      });
     }
   };
 </script>
@@ -86,7 +98,7 @@
   }
 
   .md-field {
-    max-width: 300px;
+    max-width: 100%;
   }
 
   #pending {

@@ -55,6 +55,11 @@ export default {
   },
   mounted() {
     this.refresh();
+    this.$nextTick(function () {
+      window.setInterval(() => {
+        this.refreshIfNeccessary();
+      },3000);
+    })
   },
   methods: {
     refresh() {
@@ -80,6 +85,11 @@ export default {
           });
       });
     },
+    refreshIfNeccessary(){
+      if(this.runningJobs.length > 0){
+        this.refresh();
+      }
+    },
     deleteJob(jobId, index){
       axios.delete('http://localhost:8080/api/jobs/' + jobId);
       this.completedJobs.splice(index, 1);
@@ -92,8 +102,7 @@ export default {
       this.completedJobs = [];
     },
     visitToJobDetails(jobId){
-      let routeData = this.$router.resolve({name: '/jobs/${jobId}'});
-      window.open(routeData.href, '_blank');
+      this.$router.push('/jobs/'+jobId);
     },
   },
 }

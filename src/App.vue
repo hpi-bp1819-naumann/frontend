@@ -1,20 +1,12 @@
 <template>
-  <div id="app" >
-    <JobSelection/>
-    <DatabaseView/>
+  <div id="app">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import JobSelection from "./components/JobSelection";
-import DatabaseView from "./components/DatabaseView";
-
 export default {
-  name: "app",
-  components: {
-    JobSelection,
-    DatabaseView
-  }
+  name: "app"
 };
 </script>
 
@@ -24,5 +16,4 @@ export default {
   /*color: #2c3e50;*/
   margin: 20px;
 }
-
 </style>

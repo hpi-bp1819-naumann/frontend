@@ -95,7 +95,7 @@
     },
     watch: {
       selectedTable: function () {
-        axios.get("http://localhost:8080/api/db/data/" + this.selectedTable).then(response =>{
+        axios.get(`http://localhost:8080/api/db/data/${this.selectedTable}`).then(response =>{
             this.data = response.data;
             this.numberOfRows = 10;
         })
@@ -103,7 +103,7 @@
     },
     methods: {
       ShowNumberOfRows: function (){
-        axios.get("http://localhost:8080/api/db/rows/" + this.selectedTable + "/" + this.numberOfRows).then(response =>{
+        axios.get(`http://localhost:8080/api/db/rows/${this.selectedTable}/${this.numberOfRows}`).then(response =>{
             this.data.rows = response.data;
         })
       }

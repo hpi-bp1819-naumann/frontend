@@ -1,6 +1,9 @@
 <template>
   <div class="job-selection md-elevation-1">
-    <div class="md-display-2">Select Job</div>
+    <div class="md-layout md-gutter">
+      <router-link to="/dashboard"><md-button class="md-raised md-primary">menu</md-button></router-link>
+      <div class="md-display-2">Select Job</div>
+    </div>
 
     <div id="analyzer" class="md-layout md-gutter">
       <div class="md-layout-item md-size-20">

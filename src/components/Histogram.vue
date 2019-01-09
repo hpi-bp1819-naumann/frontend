@@ -12,7 +12,7 @@
       </div>
 
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-25">
+        <div class="md-layout-item md-size-20">
           <md-field>
             <label>Minimum Bucket Size</label>
             <md-input v-model="minimumBucketSize" type="number" min="0"></md-input>

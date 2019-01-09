@@ -1,7 +1,14 @@
 <template>
   <div>
-    <!-- <div id="histogramPlot" style="width:90%;height:250px;"></div> -->
-    <div :ref="id" style="width:90%;height:250px;"></div>
+    <div class="histogram-options">
+      <div class="md-layout-item md-size-20">
+        <md-field>
+          <label>Minimum Bucket Size</label>
+          <md-input v-model="minimumBucketSize" type="number" min="1"></md-input>
+        </md-field>
+      </div>
+    </div>
+    <div :ref="id" style="width:90%;height:400px;"></div>
   </div>
 </template>
 
@@ -10,34 +17,48 @@ export default {
   props: ["frequencies"],
   data() {
     return {
-      id: "histogramPlot2"
+      id: "histogramPlot",
+      minimumBucketSize: 1
     };
   },
   mounted() {
-    var data = [];
-    const frequencies = this.frequencies;
-    Object.keys(frequencies).map(function(key) {
-      const absolute = frequencies[key].absolute;
-      var yarray = new Array(absolute).fill(absolute);
-      var trace = { x: yarray, name: key };
-      data.push(trace);
-    });
-
-    Plotly.plot(this.$refs[this.id], data, {
-      margin: { t: 0 }
-    });
-
-    new Chartist.Bar(
-      "#histogramPlot",
-      {
-        labels: [Object.keys(this.frequencies)],
-        series: [[Object.values(this.frequencies).map(d => d.absolute)]]
-      },
-      {
-        low: 0,
-        showArea: true
-      }
-    );
+    this.plot();
+  },
+  watch: {
+    minimumBucketSize: function() {
+      this.plot();
+    }
+  },
+  methods: {
+    plot: function() {
+      const frequencies = this.frequencies;
+      const filteredKeys = Object.keys(frequencies).filter(
+        key => frequencies[key].absolute >= this.minimumBucketSize
+      );
+      const absolute = filteredKeys.map(key => frequencies[key].absolute);
+      const keys = filteredKeys;
+      const trace = {
+        x: keys,
+        y: absolute,
+        text: absolute.map(String),
+        type: "bar",
+        textposition: "auto",
+        hoverinfo: "x+y"
+      };
+      const layout = {
+        xaxis: {
+          type: "category"
+        }
+      };
+      const data = [trace];
+      Plotly.newPlot(this.$refs[this.id], data, layout);
+    }
   }
 };
 </script>
+
+<style>
+.histogram-options {
+  padding: 20px;
+}
+</style>

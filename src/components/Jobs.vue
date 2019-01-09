@@ -96,12 +96,7 @@ export default {
       this.completedJobs.splice(index, 1);
     },
     deleteAllJobs() {
-      console.log("completedJobs.length: " + this.completedJobs.length);
-      for (let i = 0; i < this.completedJobs.length; i++) {
-        axios.delete(
-          "http://localhost:8080/api/jobs/" + this.completedJobs[i].id
-        );
-      }
+      axios.delete("http://localhost:8080/api/jobs");
       this.completedJobs = [];
     },
     visitToJobDetails(jobId) {

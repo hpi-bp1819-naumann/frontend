@@ -16,28 +16,49 @@
             </md-option>
           </md-select>
         </md-field>
-        <md-table v-model="firstRows.metaData.columns" md-card>
-          <md-table-row slot="md-table-row" slot-scope="{ item }">
-            <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
-            <md-table-cell md-label="Datatype">{{item.dataType}}</md-table-cell>
-        </md-table-row>
-      </md-table>
       </div>
 
       <div class="md-layout-item md-size-80">
-        <md-field>
-          Database: {{database.db}} <br>
-          JDBC-Version: {{jdbcversion.jdbc}}
-        </md-field>
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item md-small-size-100">
+            <md-field>
+              <label>Number of Rows</label>
+              <md-input v-model="numberOfRows" spellcheck="false"></md-input>
+            <md-button class="md-dense md-raised md-primary" @click="ShowNumberOfRows">show rows</md-button>
+            </md-field>
+          </div>
+          <div class="md-layout-item md-small-size-100">
+            <md-field>
+              Database: {{database.db}} <br>
+              JDBC-Version: {{jdbcversion.jdbc}}
+            </md-field>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="md-layout md-gutter">
+
+      <div class="md-layout-item md-size-20">
+        <md-table v-model="data.metaData.columns" md-card>
+          <md-table-row slot="md-table-row" slot-scope="{ item }">
+            <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
+            <md-table-cell md-label="Datatype">{{item.dataType}}</md-table-cell>
+          </md-table-row>
+        </md-table>
+      </div>
+
+      <div class="md-layout-item md-size-80">
         <md-table md-card>
           <md-table-row>
-            <md-table-head v-for="(item, index) in firstRows.metaData.columns"
+            <md-table-head v-for="(item, index) in data.metaData.columns"
                     :value="item.name"
                     :key="index">
                     {{item.name}}
             </md-table-head>
           </md-table-row>
-          <md-table-row v-for="(row, index) in firstRows.rows"
+          <md-table-row v-for="(row, index) in data.rows"
                     :value="row"
                     :key="index">
               <md-table-cell v-for="(cell, index) in row"
@@ -48,6 +69,7 @@
             </md-table-row>
         </md-table>
       </div>
+
     </div>
 
   </div>
@@ -63,17 +85,24 @@
       return {
         tables: [],
         selectedTable: "",
-        firstRows: {},
+        data: {},
         database: "",
-        jdbcversion: ""
+        jdbcversion: "",
+        numberOfRows: 10
       };
     },
     watch: {
       selectedTable: function () {
-        console.log("test:" + this.selectedTable + ".");
         axios.get("http://localhost:8080/api/db/data/" + this.selectedTable).then(response =>{
-            this.firstRows = response.data;
-            console.log("got it");
+            this.data = response.data;
+            this.numberOfRows = 10;
+        })
+      }
+    },
+    methods: {
+      ShowNumberOfRows: function (){
+        axios.get("http://localhost:8080/api/db/rows/" + this.selectedTable + "/" + this.numberOfRows).then(response =>{
+            this.data.rows = response.data;
         })
       }
     },

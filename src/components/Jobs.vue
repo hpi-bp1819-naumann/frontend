@@ -1,26 +1,6 @@
 <template>
   <div>
 
-    <!--<form novalidate class="md-layout" @submit.prevent="validateUser">-->
-
-      <!--<md-card class="md-layout-item md-size-50 md-small-size-100">-->
-          <!--<div class="md-layout md-gutter">-->
-            <!--<div class="md-layout-item md-small-size-100">-->
-              <!--<md-field :class="getValidationClass('firstName')">-->
-
-                <!--<md-input name="first-name" id="first-name" v-model="form.firstName"/>-->
-                <!--<span class="md-error" v-if="!$v.form.firstName.required">The first name is required</span>-->
-                <!--<span class="md-error" v-else-if="!$v.form.firstName.minlength">Invalid first name</span>-->
-
-              <!--</md-field>-->
-            <!--</div>-->
-            <!--<md-button type="submit" class="md-primary">Create user</md-button>-->
-          <!--</div>-->
-      <!--</md-card>-->
-    <!--</form>-->
-
-
-
     <div class="md-display-2" id="pending">Pending Jobs</div>
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-size-80">
@@ -53,7 +33,7 @@
           </md-list-item>
         </md-list>
 
-        <md-button v-if="completedJobs.length > 0 " @click="deleteAllJobs">
+        <md-button v-if="completedJobs.length > 0" @click="deleteAllJobs">
           Delete all finished Jobs
         </md-button>
       </div>
@@ -66,34 +46,14 @@
 
 <script>
   import axios from "axios";
-  import Vuelidate from 'vuelidate';
-  import {validationMixin} from 'vuelidate';
-  import {
-    required,
-    email,
-    minLength,
-    maxLength
-  } from 'vuelidate/lib/validators';
 
   export default {
     name: "Jobs",
-    mixins: [validationMixin],
     data() {
       return {
         runningJobs: [],
         completedJobs: [],
-        form: {
-          firstName: null,
-        },
       };
-    },
-    validations: {
-      form: {
-        firstName: {
-          required,
-          minLength: minLength(3)
-        },
-      }
     },
     mounted() {
       this.refresh();

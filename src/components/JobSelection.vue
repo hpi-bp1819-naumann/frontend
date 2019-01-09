@@ -2,9 +2,6 @@
   <div class="job-selection md-elevation-1">
     <div class="md-display-2">Select Job</div>
 
-
-    {{form.selectedAnalyzer}}
-
     <form novalidate @submit.prevent="validateUser">
 
       <div id="analyzer" class="md-layout md-gutter">
@@ -202,14 +199,6 @@
           this.startJob();
         } else{
           console.log("User in invalid")
-        }
-      },
-      getValidationClass(fieldName) {
-        const field = this.$v.form[fieldName];
-        if (field) {
-          return {
-            'md-invalid': field.$invalid && field.$dirty
-          }
         }
       },
       getValidationClassForSelectedAnalyzer(fieldName) {

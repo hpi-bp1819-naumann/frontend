@@ -1,9 +1,16 @@
 <template>
   <div>
-    <h1>Job Details</h1>
+    <div class="md-layout md-gutter">
+      <router-link to="/jobs"><md-button class="md-raised md-primary">analyzers</md-button></router-link>
+      <div class="md-display-2">Job Details</div>
+    </div>
     <md-list>
-      <md-list-item>{{this.job.id}}</md-list-item>
+      <md-list-item>{{this.job.name}}</md-list-item>
       <md-list-item>Status: {{this.job.status}}</md-list-item>
+      <md-list-item
+        v-for="(value, param) in job.params"
+        v-bind:key="param"
+      >{{param}}: {{value ? value : "Not defined"}}</md-list-item>
       <md-list-item>Started: {{this.job.startingTime.toLocaleString()}}</md-list-item>
       <md-list-item
         v-if="job.status === 'completed'"
@@ -11,11 +18,15 @@
       <md-list-item
         v-if="job.status === 'completed'"
       >Duration: {{msToTime(this.job.finishingTime - this.job.startingTime)}}</md-list-item>
+
       <div v-if="job.status === 'completed'">
-        <!-- hacky way to distingush between Histogram and others -->
-        <div v-if="job.result.value.values">
+        <div v-if="job.name === 'Histogram'">
           <br>
-          <histogram :frequencies="job.result.value.values"></histogram>
+          <histogram :frequencies="job.result.value.values" type="bar"></histogram>
+        </div>
+        <div v-else-if="job.name === 'DataType'">
+          <br>
+          <histogram :frequencies="job.result.value.values" type="pie"></histogram>
         </div>
         <md-list-item v-else>Result: {{this.job.result.value}}</md-list-item>
       </div>
@@ -34,9 +45,11 @@ export default {
       job: {
         id: "",
         status: "",
+        name: "",
         result: {},
         startingTime: "",
-        finishingTime: ""
+        finishingTime: "",
+        params: {}
       }
     };
   },
@@ -64,7 +77,6 @@ export default {
           this.job = job;
         })
         .catch(err => {
-          console.log(this.$route);
           this.$router.push("/jobs");
         });
     },
@@ -76,15 +88,15 @@ export default {
         hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
       if (hours > 0) {
-        result += hours + "h ";
+        result += hours + " h ";
       }
       if (minutes > 0 || hours > 0) {
-        result += minutes + "min ";
+        result += minutes + " min ";
       }
       if (seconds > 0 || minutes > 0 || hours > 0) {
-        result += seconds + "sec ";
+        result += seconds + " sec ";
       }
-      result += milliseconds + "msec";
+      result += milliseconds + " msec";
 
       return result;
     }

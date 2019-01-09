@@ -1,6 +1,9 @@
 <template>
   <div class="job-selection md-elevation-1">
-    <div class="md-display-2">Select Job</div>
+    <div class="md-layout md-gutter">
+      <router-link to="/dashboard"><md-button class="md-raised md-primary">menu</md-button></router-link>
+      <div class="md-display-2">Select Job</div>
+    </div>
 
     <form novalidate @submit.prevent="validateUser">
 
@@ -9,11 +12,14 @@
           <md-field>
             <label>Analyzer</label>
             <md-select v-model="selectedAnalyzerIndex">
-              <md-option v-for="(analyzer, index) in analyzers" :value="index" :key="index">{{analyzer.name}}</md-option>
+              <md-option v-for="(analyzer, index) in analyzers" :value="index" :key="index">
+                {{analyzer.name}}
+              </md-option>
             </md-select>
           </md-field>
         </div>
       </div>
+
 
       <div  class="md-layout md-gutter" >
         <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasContext">
@@ -220,11 +226,8 @@
 </script>
 
 <style>
-  .job-selection {
-    padding: 20px;
-  }
 
-  #pending {
-    margin-top: 20px;
-  }
+.job-selection {
+  padding: 20px;
+}
 </style>

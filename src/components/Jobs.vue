@@ -24,11 +24,12 @@
               <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
               
               <span v-if="job.result.hasOwnProperty('exception')" class="md-list-item-text">Error</span>
+              <span v-else-if="job.name === 'Histogram'" class="md-list-item-text">Result: too long</span>
               <span
-                v-else-if="job.name !== 'Histogram' && job.name !== 'DataType'"
+                v-else-if="job.name === 'DataType'"
                 class="md-list-item-text"
-              >Result: {{job.result.value}}</span>
-              <span v-else class="md-list-item-text">Result: too long</span>
+              >Result: {{getMaximumAbsoluteValue(job.result.value.values)}}</span>
+              <span v-else class="md-list-item-text">Result: {{job.result.value}}</span>
 
               <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
               <md-button class="md-icon-button" @click="deleteJob(job.id, index)">
@@ -101,6 +102,12 @@ export default {
     },
     visitToJobDetails(jobId) {
       this.$router.push("/jobs/" + jobId);
+    },
+    getMaximumAbsoluteValue(values) {
+      const keys = Object.keys(values);
+      return keys.reduce((max, curr) =>
+        values[max].absolute > values[curr].absolute ? max : curr
+      );
     }
   }
 };

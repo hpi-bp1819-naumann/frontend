@@ -43,7 +43,7 @@
     <div class="md-layout md-gutter">
 
       <div class="md-layout-item md-size-20">
-        <md-table v-model="data.metaData.columns" md-card>
+        <md-table v-model="data.columns" md-card>
           <md-table-row slot="md-table-row" slot-scope="{ item }">
             <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
             <md-table-cell md-label="Datatype">{{item.dataType}}</md-table-cell>
@@ -54,7 +54,7 @@
       <div class="md-layout-item md-size-80">
         <md-table md-card>
           <md-table-row>
-            <md-table-head v-for="(item, index) in data.metaData.columns"
+            <md-table-head v-for="(item, index) in data.columns"
                     :value="item.name"
                     :key="index">
                     {{item.name}}

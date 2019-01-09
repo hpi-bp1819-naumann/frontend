@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1>Job Details</h1>
+    <div class="md-layout md-gutter">
+      <router-link to="/jobs"><md-button class="md-raised md-primary">analyzers</md-button></router-link>
+      <div class="md-display-2">Job Details</div>
+    </div>
     <md-list>
       <md-list-item>{{this.job.name}}</md-list-item>
       <md-list-item>Status: {{this.job.status}}</md-list-item>

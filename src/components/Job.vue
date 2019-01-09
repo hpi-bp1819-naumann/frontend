@@ -4,7 +4,10 @@
     <md-list>
       <md-list-item>{{this.job.name}}</md-list-item>
       <md-list-item>Status: {{this.job.status}}</md-list-item>
-      <md-list-item v-for="(value, param) in job.params" v-bind:key="param">{{param}}: {{value}}</md-list-item>
+      <md-list-item
+        v-for="(value, param) in job.params"
+        v-bind:key="param"
+      >{{param}}: {{value ? value : "Not defined"}}</md-list-item>
       <md-list-item>Started: {{this.job.startingTime.toLocaleString()}}</md-list-item>
       <md-list-item
         v-if="job.status === 'completed'"
@@ -16,7 +19,11 @@
       <div v-if="job.status === 'completed'">
         <div v-if="job.name === 'Histogram'">
           <br>
-          <histogram :frequencies="job.result.value.values"></histogram>
+          <histogram :frequencies="job.result.value.values" type="bar"></histogram>
+        </div>
+        <div v-else-if="job.name === 'DataType'">
+          <br>
+          <histogram :frequencies="job.result.value.values" type="pie"></histogram>
         </div>
         <md-list-item v-else>Result: {{this.job.result.value}}</md-list-item>
       </div>

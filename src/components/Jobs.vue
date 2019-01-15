@@ -43,16 +43,17 @@
           </md-button>
         </div>
       </div>
-
-
     </div>
+
+    <modals-container/>
+
   </div>
 
 </template>
 
 <script>
   import axios from "axios";
-
+  import Job from "./Job";
 
 export default {
   name: "Jobs",
@@ -108,7 +109,13 @@ export default {
       this.completedJobs = [];
     },
     visitToJobDetails(jobId) {
-      this.$router.push("/jobs/" + jobId);
+      this.$modal.show(Job, {
+        id: jobId
+      },{
+        name: "Details",
+        height: 'auto',
+        scrollable: true
+      });
     },
     getMaximumAbsoluteValue(values) {
       const keys = Object.keys(values);

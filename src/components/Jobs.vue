@@ -42,18 +42,30 @@
         </div>
       </div>
     </div>
+
+    <md-dialog :md-active.sync="showDialog">
+      <md-dialog-content>
+        <job :id=jobId></job>
+      </md-dialog-content>
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+      </md-dialog-actions>
+    </md-dialog>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+  import axios from "axios";
+  import Job from "./Job";
 
 export default {
   name: "Jobs",
   data() {
     return {
+      jobId: "",
       runningJobs: [],
-      completedJobs: []
+      completedJobs: [],
+      showDialog: false
     };
   },
   mounted() {
@@ -63,6 +75,8 @@ export default {
         this.refreshIfNeccessary();
       }, 3000);
     });
+  },components: {
+    job: Job
   },
   methods: {
     refresh() {
@@ -106,7 +120,8 @@ export default {
       this.runningJobs.splice(index, 1);
     },
     visitToJobDetails(jobId) {
-      this.$router.push("/jobs/" + jobId);
+      this.jobId = jobId;
+      this.showDialog = true;
     },
     getMaximumAbsoluteValue(values) {
       const keys = Object.keys(values);
@@ -123,8 +138,15 @@ export default {
   background-color: transparent !important;
 }
 
-#pending,
-#completed {
-  margin-top: 20px;
-}
+  #pending, 
+  #completed {
+    margin-top: 20px;
+  }
+
+  .md-dialog {
+    max-height: 98%;
+    max-width: 98%;
+    min-height: 50%;
+    min-width: 70%;
+  }
 </style>

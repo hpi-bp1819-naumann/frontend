@@ -12,13 +12,13 @@
       </div>
 
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-20">
+        <div class="md-layout-item md-size-33">
           <md-field>
             <label>Minimum Bucket Size</label>
             <md-input v-model="minimumBucketSize" type="number" min="0"></md-input>
           </md-field>
         </div>
-        <div class="md-layout-item md-size-20">
+        <div class="md-layout-item md-size-33">
           <md-field>
             <label>Sort by Bucket Size</label>
             <md-select v-model="sortByBucketSize">
@@ -28,7 +28,7 @@
             </md-select>
           </md-field>
         </div>
-        <div class="md-layout-item md-size-20">
+        <div class="md-layout-item md-size-33">
           <md-field>
             <label>Sort by Bucket Name</label>
             <md-select v-model="sortByBucketName">

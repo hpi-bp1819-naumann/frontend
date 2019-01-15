@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="md-layout md-gutter">
-      <router-link to="/jobs"><md-button class="md-raised md-primary">analyzers</md-button></router-link>
       <div class="md-display-2">Job Details</div>
     </div>
     <md-list>
@@ -39,6 +38,7 @@ import axios from "axios";
 import Histogram from "./Histogram";
 
 export default {
+  props: ["id"],
   name: "Job",
   data() {
     return {
@@ -67,7 +67,7 @@ export default {
   methods: {
     fetchData() {
       axios
-        .get(`http://localhost:8080/api/jobs/${this.$route.params.jobId}`)
+        .get(`http://localhost:8080/api/jobs/${this.id}`)
         .then(resp => {
           var job = resp.data.job;
           job.startingTime = new Date(job.startingTime);

@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div v-if="runningJobs.length > 0">
       <div class="md-display-2" id="pending">Running Jobs</div>
       <div class="md-layout md-gutter">
@@ -9,6 +8,7 @@
             <md-list-item v-for="(job, index) in runningJobs" :key="index">
               <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
               <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
+              <md-button @click="cancelJob(job.id, index)" class="md-dense md-raised">Cancel</md-button>
             </md-list-item>
           </md-list>
         </div>
@@ -28,8 +28,8 @@
               <span v-else-if="job.name === 'Histogram'" class="md-list-item-text">Result: too long</span>
               <span
                 v-else-if="job.name === 'DataType'"
-                class="md-list-item-text">
-                Result: {{getMaximumAbsoluteValue(job.result.value.values)}}</span>
+                class="md-list-item-text"
+              >Result: {{getMaximumAbsoluteValue(job.result.value.values)}}</span>
               <span v-else class="md-list-item-text">Result: {{job.result.value}}</span>
 
               <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
@@ -38,21 +38,15 @@
               </md-button>
             </md-list-item>
           </md-list>
-          <md-button v-if="completedJobs.length > 0" @click="deleteAllJobs">
-            Delete all finished Jobs
-          </md-button>
+          <md-button v-if="completedJobs.length > 0" @click="deleteAllJobs">Delete all finished Jobs</md-button>
         </div>
       </div>
-
-
     </div>
   </div>
-
 </template>
 
 <script>
-  import axios from "axios";
-
+import axios from "axios";
 
 export default {
   name: "Jobs",
@@ -107,6 +101,10 @@ export default {
       axios.delete("http://localhost:8080/api/jobs");
       this.completedJobs = [];
     },
+    cancelJob(jobId, index) {
+      axios.post(`http://localhost:8080/api/jobs/${jobId}/cancel`);
+      this.runningJobs.splice(index, 1);
+    },
     visitToJobDetails(jobId) {
       this.$router.push("/jobs/" + jobId);
     },
@@ -121,11 +119,12 @@ export default {
 </script>
 
 <style>
-  .custom-md-list {
-    background-color: transparent !important;
-  }
+.custom-md-list {
+  background-color: transparent !important;
+}
 
-  #pending, #completed {
-    margin-top: 20px;
-  }
+#pending,
+#completed {
+  margin-top: 20px;
+}
 </style>

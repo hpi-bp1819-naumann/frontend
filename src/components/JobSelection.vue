@@ -59,6 +59,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('instance')">
             <label>Instance</label>
             <md-input v-model="job.form.selectedAnalyzer.instance" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">metric instance name, describing what the analysis is being done for<br>e.g. "example"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.instance.required">This field is required</span>-->
           </md-field>
         </div>
@@ -67,6 +68,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('predicate')">
             <label>Predicate</label>
             <md-input v-model="job.form.selectedAnalyzer.predicate" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">SQL-predicate to apply per row <br>e.g. "Price > 50"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.predicate.required">This field is required</span>-->
           </md-field>
         </div>
@@ -75,6 +77,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('patternMatch')">
             <label>Pattern</label>
             <md-input v-model="job.form.selectedAnalyzer.patternMatch" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">The regular expression to check for <br>e.g. "for | (example)*"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.patternMatch.required">This field is required</span>-->
           </md-field>
         </div>
@@ -83,6 +86,7 @@
           <md-field>
             <label>WHERE</label>
             <md-input v-model="job.form.selectedAnalyzer.where" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">Additional filter to apply before the analyzer is run <br>e.g. "Price > 50"</md-tooltip>
           </md-field>
         </div>
 
@@ -263,5 +267,9 @@
   .job-selection {
     padding: 20px;
   }
+
+  .md-tooltip {
+    height: auto;
+}
 
 </style>

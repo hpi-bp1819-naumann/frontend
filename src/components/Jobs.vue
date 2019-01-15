@@ -45,8 +45,14 @@
       </div>
     </div>
 
-    <modals-container/>
-
+    <md-dialog :md-active.sync="showDialog">
+      <md-dialog-content>
+        <job :id=jobId></job>
+      </md-dialog-content>
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+      </md-dialog-actions>
+    </md-dialog>
   </div>
 
 </template>
@@ -59,8 +65,10 @@ export default {
   name: "Jobs",
   data() {
     return {
+      jobId: "",
       runningJobs: [],
-      completedJobs: []
+      completedJobs: [],
+      showDialog: false
     };
   },
   mounted() {
@@ -70,6 +78,8 @@ export default {
         this.refreshIfNeccessary();
       }, 3000);
     });
+  },components: {
+    job: Job
   },
   methods: {
     refresh() {
@@ -109,13 +119,8 @@ export default {
       this.completedJobs = [];
     },
     visitToJobDetails(jobId) {
-      this.$modal.show(Job, {
-        id: jobId
-      },{
-        name: "Details",
-        height: 'auto',
-        scrollable: true
-      });
+      this.jobId = jobId;
+      this.showDialog = true;
     },
     getMaximumAbsoluteValue(values) {
       const keys = Object.keys(values);
@@ -134,5 +139,12 @@ export default {
 
   #pending, #completed {
     margin-top: 20px;
+  }
+
+  .md-dialog {
+    max-height: 98%;
+    max-width: 98%;
+    min-height: 50%;
+    min-width: 70%;
   }
 </style>

@@ -10,11 +10,10 @@
     <form novalidate @submit.prevent="validateUser">
 
       <div class="md-layout md-gutter">
-        Jobs: {{jobs[0].form}}
-        <div class="md-layout-item md-size-20" v-if="jobs[0].form.selectedAnalyzer.options.hasContext">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasContext">
           <md-field>
             <label>Context</label>
-            <md-select v-model="jobs[0].form.selectedAnalyzer.context">
+            <md-select v-model="jobs[0].selectedAnalyzer.context">
               <md-option
                 v-for="(context, index) in contexts"
                 :key="index"
@@ -24,20 +23,19 @@
           </md-field>
         </div>
 
-
-        <div class="md-layout-item md-size-20" v-if="jobs[0].form.selectedAnalyzer.options.hasTable">
-          <md-field :class="getValidationClassForSelectedAnalyzer('table')">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasTable">
+          <md-field :class="{'md-invalid': !areFieldsValid[0]}">
             <label>Tablename</label>
-            <md-input v-model="jobs[0].form.selectedAnalyzer.table" spellcheck="false"></md-input>
-            <!--<span class="md-error" v-if="!$v.form.selectedAnalyzer.table.required">This field is required</span>-->
+            <md-input  ref="tableName" v-model="jobs[0].selectedAnalyzer.table" spellcheck="false"></md-input>
+            <!--<span class="md-error" v-if="!$v.selectedAnalyzer.table.required">This field is required</span>-->
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="jobs[0].form.selectedAnalyzer.options.hasColumn">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasColumn">
           <md-field :class="getValidationClassForSelectedAnalyzer('column')">
             <label>Columnname</label>
-            <md-input v-model="jobs[0].form.selectedAnalyzer.column" spellcheck="false"></md-input>
-            <!--<span class="md-error" v-if="!$v.form.selectedAnalyzer.column.required">This field is required</span>-->
+            <md-input v-model="jobs[0].selectedAnalyzer.column" spellcheck="false"></md-input>
+            <!--<span class="md-error" v-if="!$v.selectedAnalyzer.column.required">This field is required</span>-->
           </md-field>
         </div>
       </div>
@@ -55,34 +53,34 @@
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="job.form.selectedAnalyzer.options.hasInstance">
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasInstance">
           <md-field :class="getValidationClassForSelectedAnalyzer('instance')">
             <label>Instance</label>
-            <md-input v-model="job.form.selectedAnalyzer.instance" spellcheck="false"></md-input>
-            <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.instance.required">This field is required</span>-->
+            <md-input v-model="job.selectedAnalyzer.instance" spellcheck="false"></md-input>
+            <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.instance.required">This field is required</span>-->
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="job.form.selectedAnalyzer.options.hasPredicate">
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasPredicate">
           <md-field :class="getValidationClassForSelectedAnalyzer('predicate')">
             <label>Predicate</label>
-            <md-input v-model="job.form.selectedAnalyzer.predicate" spellcheck="false"></md-input>
-            <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.predicate.required">This field is required</span>-->
+            <md-input v-model="job.selectedAnalyzer.predicate" spellcheck="false"></md-input>
+            <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.predicate.required">This field is required</span>-->
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="job.form.selectedAnalyzer.options.hasPattern">
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasPattern">
           <md-field :class="getValidationClassForSelectedAnalyzer('patternMatch')">
             <label>Pattern</label>
-            <md-input v-model="job.form.selectedAnalyzer.patternMatch" spellcheck="false"></md-input>
-            <!--<span class="md-error" v-if="!$v.job.form.selectedAnalyzer.patternMatch.required">This field is required</span>-->
+            <md-input v-model="job.selectedAnalyzer.patternMatch" spellcheck="false"></md-input>
+            <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.patternMatch.required">This field is required</span>-->
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="job.form.selectedAnalyzer.options.hasWhere">
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasWhere">
           <md-field>
             <label>WHERE</label>
-            <md-input v-model="job.form.selectedAnalyzer.where" spellcheck="false"></md-input>
+            <md-input v-model="job.selectedAnalyzer.where" spellcheck="false"></md-input>
           </md-field>
         </div>
 
@@ -104,33 +102,32 @@
 <script>
   import axios from "axios";
   import Jobs from "./Jobs";
-  import {validationMixin} from 'vuelidate';
-  import {
-    required,
-    email,
-    minLength,
-    maxLength
-  } from 'vuelidate/lib/validators';
+  // import {validationMixin} from 'vuelidate';
+  // import {
+  //   required,
+  //   email,
+  //   minLength,
+  //   maxLength
+  // } from 'vuelidate/lib/validators';
 
   export default {
     name: "JobSelection",
-    mixins: [validationMixin],
+    // mixins: [validationMixin],
     data() {
       return {
+        areFieldsValid: [true, true], //0 tableName, 1 columnName, 2+ []Array of Values for field
         analyzers: [],
         contexts: ["jdbc", "spark"],
         jobs: [
           {
-            form: {
-              selectedAnalyzer: {
-                context: "jdbc",
-                table: "food_des",
-                column: "fat_factor",
-                where: null,
-                options: {},
-                key: "",
-                name: null,
-              },
+            selectedAnalyzer: {
+              context: "jdbc",
+              table: "food_des",
+              column: "fat_factor",
+              where: null,
+              options: {},
+              key: "",
+              name: null,
             },
             selectedAnalyzerIndex: 0,
           }
@@ -140,7 +137,7 @@
     // validations() {
     //   let regularValidation = {
     //     form: {
-    //       selectedAnalyzer: {
+    //       "selectedAnalyzer0": {
     //         table: {required},
     //         column: {required},
     //         instance: {},
@@ -165,7 +162,10 @@
     },
     methods: {
       setParamsForSelectedAnalyzer(jobIndex) {
-        let jobAnalyzer = this.jobs[jobIndex].form.selectedAnalyzer;
+        if (this.analyzers.length === 0) { //at initial loading
+          return;
+        }
+        let jobAnalyzer = this.jobs[jobIndex].selectedAnalyzer;
         let selectedAnalyzer = this.analyzers[this.jobs[jobIndex].selectedAnalyzerIndex];
         jobAnalyzer.name = selectedAnalyzer.name;
         jobAnalyzer.key = selectedAnalyzer.key;
@@ -179,7 +179,6 @@
           jobAnalyzer.options[hasString] = true;
         }
       },
-
       startSingleJob: function (jobAnalyzer) {
         let requestObject = {
           context: jobAnalyzer.context,
@@ -195,52 +194,60 @@
         }
         console.log("requestObject: ", requestObject);
         return axios.post(
-            `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
-            requestObject
-          );
-
+          `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
+          requestObject
+        );
       },
-
-      startJobs: function () {
-        let promises = [];
-        let that = this;
-        this.jobs.forEach(function(job){
-          promises.push(that.startSingleJob(job.form.selectedAnalyzer));
-        });
-
-        axios.all(promises).then(function(results){
-          results.forEach(function(response){
-            console.log("response is: ", response);
-          })
-        }).then(() => {
-          console.log("alle responses fertig!");
+      startJob: function (startIndex, endIndex) {
+        if (startIndex === endIndex) {
           this.$refs.jobsOverview.refresh();
-        });
-
-        //.then(() => this.$refs.jobsOverview.refresh());
-
-        // for (let i = 0; i < this.jobs.length; i++) {
-        //   this.startSingleJob(this.jobs[i].form.selectedAnalyzer);
-        // }
+          return;
+        } else {
+          this.startSingleJob(this.jobs[startIndex].selectedAnalyzer).then(() => {
+            this.startJob(startIndex + 1, endIndex);
+          });
+        }
+      },
+      startJobs: function () {
+        this.startJob(0, this.jobs.length);
       },
       validateUser() {
+
+        //validate if tablename is there
+        if(this.jobs[0].selectedAnalyzer.table === ""){
+          this.areFieldsValid[0] = false;
+          console.log("Kein Tabellenname!", this.areFieldsValid);
+          return;
+        }
+        //validate for columname (IF NECCESSARY!)
+
+        console.log("JOBS: " , this.jobs);
         this.startJobs();
-        // this.$v.form.$touch();
+        // this.$v.$touch();
         // if (!this.$v.$invalid) {
         //   console.log("User is valid!");
         //   this.startJob();
         // } else {
         //   console.log("User in invalid")
         // }
+
+        // this.$v.jobs.$touch();
+        // if (!this.$v.$invalid) {
+        //   console.log("Job is valid!");
+        //   this.startJobs();
+        // } else {
+        //   console.log("Job in invalid")
+        // }
+
       },
       getValidationClassForSelectedAnalyzer(fieldName) {
-        // const field = this.$v.form.selectedAnalyzer[fieldName];
+        // const field = this.$v.selectedAnalyzer[fieldName];
         // if (field) {
         //   return {
         //     'md-invalid': field.$invalid && field.$dirty
         //   }
         // }
-        return "nix";
+        return "noClass";
       },
       copyJob: function () {
         this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
@@ -250,7 +257,6 @@
       axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
         this.analyzers = response.data.analyzers;
         this.selectedAnalyzerIndex = 0;
-        console.log("analyzers set: ", this.analyzers);
       }).then(() => {
         this.setParamsForSelectedAnalyzer(0);
       });

@@ -1,31 +1,19 @@
 <template>
   <div class="job-selection md-elevation-1">
     <div class="md-layout md-gutter">
-      <router-link to="/dashboard"><md-button class="md-raised md-primary">menu</md-button></router-link>
+      <router-link to="/dashboard">
+        <md-button class="md-raised md-primary">menu</md-button>
+      </router-link>
       <div class="md-display-2">Select Job</div>
     </div>
 
-    <form novalidate @submit.prevent="validateUser">
+    <form novalidate @submit.prevent="startJobs">
 
-      <div id="analyzer" class="md-layout md-gutter">
-        <div class="md-layout-item md-size-20">
-          <md-field>
-            <label>Analyzer</label>
-            <md-select v-model="selectedAnalyzerIndex">
-              <md-option v-for="(analyzer, index) in analyzers" :value="index" :key="index">
-                {{analyzer.name}}
-              </md-option>
-            </md-select>
-          </md-field>
-        </div>
-      </div>
-
-
-      <div  class="md-layout md-gutter" >
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasContext">
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasContext">
           <md-field>
             <label>Context</label>
-            <md-select v-model="form.selectedAnalyzer.context">
+            <md-select v-model="jobs[0].selectedAnalyzer.context">
               <md-option
                 v-for="(context, index) in contexts"
                 :key="index"
@@ -35,61 +23,80 @@
           </md-field>
         </div>
 
-
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasTable">
-          <md-field :class="getValidationClassForSelectedAnalyzer('table')">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasTable">
+          <md-field :class="{'md-invalid': !areFieldsValid[0]}">
             <label>Tablename</label>
-            <md-input v-model="form.selectedAnalyzer.table" spellcheck="false"></md-input>
-            <span class="md-error" v-if="!$v.form.selectedAnalyzer.table.required">This field is required</span>
+            <md-input ref="tableName" v-model="jobs[0].selectedAnalyzer.table" spellcheck="false" @keyup="validateForm"></md-input>
+            <span class="md-error" v-if="!areFieldsValid[0]">This field is required</span>
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasColumn">
-          <md-field :class="getValidationClassForSelectedAnalyzer('column')">
+        <div class="md-layout-item md-size-20" v-if="jobs[0].selectedAnalyzer.options.hasColumn">
+          <md-field :class="{'md-invalid': !areFieldsValid[1]}">
             <label>Columnname</label>
-            <md-input v-model="form.selectedAnalyzer.column" spellcheck="false"></md-input>
-            <span class="md-error" v-if="!$v.form.selectedAnalyzer.column.required">This field is required</span>
+            <md-input v-model="jobs[0].selectedAnalyzer.column" spellcheck="false" @keyup="validateForm"></md-input>
+            <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
           </md-field>
         </div>
+      </div>
+
+      <div class="md-layout md-gutter" v-for="(job, jobIndex) in jobs">
+
+        <div class="md-layout-item md-size-20">
+          <md-field>
+            <label>Analyzer</label>
+            <md-select v-model="job.selectedAnalyzerIndex" @md-selected="setParamsForSelectedAnalyzer(jobIndex)">
+              <md-option v-for="(analyzer, index) in analyzers" :value="index" :key="index">
+                {{analyzer.name}}
+              </md-option>
+            </md-select>
+          </md-field>
+        </div>
+
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasInstance">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">
+            <label>Instance</label>
+            <md-input v-model="job.selectedAnalyzer.instance" spellcheck="false" @keyup="validateForm"></md-input>
+            <md-tooltip md-direction="right">metric instance name, describing what the analysis is being done for<br>e.g. "example"</md-tooltip>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][0]">This field is required</span>
+          </md-field>
+        </div>
+
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasPredicate">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][1]}">
+            <label>Predicate</label>
+            <md-input v-model="job.selectedAnalyzer.predicate" spellcheck="false" @keyup="validateForm"></md-input>
+            <md-tooltip md-direction="right">SQL-predicate to apply per row <br>e.g. "Price > 50"</md-tooltip>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][1]">This field is required</span>
+          </md-field>
+        </div>
+
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasPattern">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">
+            <label>Pattern</label>
+            <md-input v-model="job.selectedAnalyzer.patternMatch" spellcheck="false" @keyup="validateForm"></md-input>
+            <md-tooltip md-direction="right">The regular expression to check for <br>e.g. "for | (example)*"</md-tooltip>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][0]">This field is required</span>
+          </md-field>
+        </div>
+
+        <div class="md-layout-item md-size-20" v-if="job.selectedAnalyzer.options.hasWhere">
+          <md-field>
+            <label>WHERE</label>
+            <md-input v-model="job.selectedAnalyzer.where" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">Additional filter to apply before the analyzer is run <br>e.g. "Price > 50"</md-tooltip>
+          </md-field>
+        </div>
+
       </div>
 
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasInstance">
-          <md-field :class="getValidationClassForSelectedAnalyzer('instance')">
-            <label>Instance</label>
-            <md-input v-model="form.selectedAnalyzer.instance" spellcheck="false"></md-input>
-            <span class="md-error" v-if="!$v.form.selectedAnalyzer.instance.required">This field is required</span>
-          </md-field>
-        </div>
-
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasPredicate">
-          <md-field :class="getValidationClassForSelectedAnalyzer('predicate')">
-            <label>Predicate</label>
-            <md-input v-model="form.selectedAnalyzer.predicate" spellcheck="false"></md-input>
-            <span class="md-error" v-if="!$v.form.selectedAnalyzer.predicate.required">This field is required</span>
-          </md-field>
-        </div>
-
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasPattern">
-          <md-field :class="getValidationClassForSelectedAnalyzer('patternMatch')">
-            <label>Pattern</label>
-            <md-input v-model="form.selectedAnalyzer.patternMatch" spellcheck="false"></md-input>
-            <span class="md-error" v-if="!$v.form.selectedAnalyzer.patternMatch.required">This field is required</span>
-          </md-field>
-        </div>
-
-        <div class="md-layout-item md-size-20" v-if="form.selectedAnalyzer.options.hasWhere">
-          <md-field>
-            <label>WHERE</label>
-            <md-input v-model="form.selectedAnalyzer.where" spellcheck="false"></md-input>
-          </md-field>
+        <div class="md-layout-item md-size-20">
+          <md-button @click="copyJob" class="md-dense md-raised ">Copy Job</md-button>
         </div>
       </div>
-
-
       <md-button type="submit" class="md-dense md-raised md-primary">Start Job</md-button>
     </form>
-
 
     <jobs ref="jobsOverview"></jobs>
   </div>
@@ -99,127 +106,123 @@
 <script>
   import axios from "axios";
   import Jobs from "./Jobs";
-  import {validationMixin} from 'vuelidate';
-  import {
-    required,
-    email,
-    minLength,
-    maxLength
-  } from 'vuelidate/lib/validators';
-
   export default {
     name: "JobSelection",
-    mixins: [validationMixin],
     data() {
       return {
+        areFieldsValid: [true, true, []], //0 tableName, 1 columnName, 2+ []Array of Values for field
         analyzers: [],
         contexts: ["jdbc", "spark"],
-        form: {
-          selectedAnalyzer: {
-            context: "jdbc",
-            table: "food_des",
-            column: "fat_factor",
-            where: null,
-            options: {},
-            key: "",
-          },
-        },
-        selectedAnalyzerIndex: null,
+        jobs: [
+          {
+            selectedAnalyzer: {
+              context: "jdbc",
+              table: "food_des",
+              column: "fat_factor",
+              where: null,
+              options: {},
+              key: "",
+              name: null,
+            },
+            selectedAnalyzerIndex: 0,
+          }
+        ],
       };
-    },
-    validations() {
-      let regularValidation = {
-        form: {
-          selectedAnalyzer: {
-            table: {required},
-            column: {required},
-            instance: {},
-            predicate: {},
-            patternMatch: {},
-          },
-        }
-      };
-      if(this.form.selectedAnalyzer.key === "compliance"){
-        regularValidation.form.selectedAnalyzer.column = {};
-        regularValidation.form.selectedAnalyzer.instance = {required};
-        regularValidation.form.selectedAnalyzer.predicate = {required};
-      } else if(this.form.selectedAnalyzer.key === "patternMatch"){
-        console.log("jawoll. Pattern!");
-        regularValidation.form.selectedAnalyzer.patternMatch = {required};
-        regularValidation.form.selectedAnalyzer.patternMatch = {required};
-      }
-      return regularValidation;
     },
     components: {
       jobs: Jobs
     },
-    watch: {
-      selectedAnalyzerIndex: function () {
-        this.form.selectedAnalyzer.name = this.analyzers[
-          this.selectedAnalyzerIndex
-          ].name;
-        this.form.selectedAnalyzer.key = this.analyzers[
-          this.selectedAnalyzerIndex
-          ].key;
+    methods: {
+      setParamsForSelectedAnalyzer(jobIndex) {
+        if (this.analyzers.length === 0) { //at initial loading
+          return;
+        }
+        let jobAnalyzer = this.jobs[jobIndex].selectedAnalyzer;
+        let selectedAnalyzer = this.analyzers[this.jobs[jobIndex].selectedAnalyzerIndex];
+        jobAnalyzer.name = selectedAnalyzer.name;
+        jobAnalyzer.key = selectedAnalyzer.key;
 
-        this.form.selectedAnalyzer.options = {};
-        for (let option of this.analyzers[this.selectedAnalyzerIndex]
-          .parameters) {
+        jobAnalyzer.options = {};
+        for (let option of selectedAnalyzer.parameters) {
           let hasString =
             "has" +
             String(option.name)[0].toUpperCase() +
             String(option.name).slice(1);
-          this.form.selectedAnalyzer.options[hasString] = true;
+          jobAnalyzer.options[hasString] = true;
         }
-        console.log("selected Analyzer: ", this.form.selectedAnalyzer);
-      }
-    },
-
-    methods: {
-      startJob: function () {
+      },
+      startSingleJob: function (jobAnalyzer) {
         let requestObject = {
-          context: this.form.selectedAnalyzer.context,
-          table:  this.form.selectedAnalyzer.table,
-          where: this.form.selectedAnalyzer.where,
-          instance: this.form.selectedAnalyzer.instance,
-          predicate: this.form.selectedAnalyzer.predicate,
-          patternMatch: this.form.selectedAnalyzer.patternMatch
+          context: jobAnalyzer.context,
+          table: jobAnalyzer.table,
+          where: jobAnalyzer.where,
+          instance: jobAnalyzer.instance,
+          predicate: jobAnalyzer.predicate,
+          patternMatch: jobAnalyzer.patternMatch
         };
 
-        if(this.form.selectedAnalyzer.options.hasColumn){
-          requestObject.column =  this.form.selectedAnalyzer.column;
+        if (jobAnalyzer.options.hasColumn) {
+          requestObject.column = jobAnalyzer.column;
         }
         console.log("requestObject: ", requestObject);
-        axios
-          .post(
-            `http://localhost:8080/api/jobs/${this.form.selectedAnalyzer.key}/start`,
-            requestObject
-          )
-          .then(() => this.$refs.jobsOverview.refresh());
+        return axios.post(
+          `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
+          requestObject
+        );
       },
-      validateUser() {
-
-        this.$v.form.$touch();
-        if (!this.$v.$invalid) {
-          console.log("User is valid!");
-          this.startJob();
-        } else{
-          console.log("User in invalid")
+      startJob: function (startIndex, endIndex) {
+        if (startIndex === endIndex) {
+          this.$refs.jobsOverview.refresh();
+          return;
+        } else {
+          this.startSingleJob(this.jobs[startIndex].selectedAnalyzer).then(() => {
+            this.startJob(startIndex + 1, endIndex);
+          });
         }
       },
-      getValidationClassForSelectedAnalyzer(fieldName) {
-        const field = this.$v.form.selectedAnalyzer[fieldName];
-        if (field) {
-          return {
-            'md-invalid': field.$invalid && field.$dirty
+      startJobs: function () {
+        if(this.validateForm() === true){
+          this.startJob(0, this.jobs.length);
+        } else{
+          console.log("Form is invalid!");
+        }
+      },
+      validateForm() {
+        this.areFieldsValid = [true, true];
+        this.jobs[0].selectedAnalyzer.table === "" ?  this.areFieldsValid[0] = false :  this.areFieldsValid[0] = true;
+        this.jobs[0].selectedAnalyzer.column === "" ?  this.areFieldsValid[1] = false :  this.areFieldsValid[1] = true;
+
+        for(let i = 0; i<this.jobs.length; i++) {
+          this.areFieldsValid.push([]);
+          if (this.jobs[i].selectedAnalyzer.key === "compliance") {
+            this.jobs[i].selectedAnalyzer.instance ? this.areFieldsValid[i+2].push(true) : this.areFieldsValid[i+2].push(false);
+            this.jobs[i].selectedAnalyzer.predicate  ? this.areFieldsValid[i+2].push(true) : this.areFieldsValid[i+2].push(false);
+          } else if(this.jobs[i].selectedAnalyzer.key === "patternMatch"){
+            this.jobs[i].selectedAnalyzer.patternMatch ? this.areFieldsValid[i+2].push(true) : this.areFieldsValid[i+2].push(false);
           }
         }
+        if(this.areFieldsValid[0] === false || this.areFieldsValid[1] === false){
+          return false;
+        }
+        for(let i = 2; i<this.areFieldsValid.length; i++){
+          for(let j = 0; j<this.areFieldsValid[i].length; j++){
+            if(this.areFieldsValid[i][j] === false)
+              return false;
+          }
+        }
+        return true;
+      },
+      copyJob: function () {
+        this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
+        this.areFieldsValid.push([]);
       },
     },
     mounted() {
       axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
         this.analyzers = response.data.analyzers;
         this.selectedAnalyzerIndex = 0;
+      }).then(() => {
+        this.setParamsForSelectedAnalyzer(0);
       });
     }
   };
@@ -227,7 +230,12 @@
 
 <style>
 
-.job-selection {
-  padding: 20px;
+  .job-selection {
+    padding: 20px;
+  }
+
+  .md-tooltip {
+    height: auto;
 }
+
 </style>

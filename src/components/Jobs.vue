@@ -73,7 +73,7 @@ export default {
     this.$nextTick(function() {
       window.setInterval(() => {
         this.refreshIfNeccessary();
-      }, 3000);
+      }, 500);
     });
   },components: {
     job: Job

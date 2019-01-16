@@ -28,6 +28,28 @@
           <histogram :frequencies="job.result.value.values" type="pie"></histogram>
         </div>
         <md-list-item v-else>Result: {{this.job.result.value}}</md-list-item>
+        <md-button
+          v-if="job.query"
+          class="md-dense md-raised md-primary"
+          @click="executeQuery()"
+        >Execute Query</md-button>
+
+        <div v-if="queryResult" class="md-layout-item">
+          <md-table md-card>
+            <md-table-row>
+              <md-table-head>index</md-table-head>
+              <md-table-head
+                v-for="(item, index) in queryResult.columns"
+                :value="item"
+                :key="index"
+              >{{item}}</md-table-head>
+            </md-table-row>
+            <md-table-row v-for="(row, index) in queryResult.data" :value="row" :key="index">
+              <md-table-cell>{{index + 1}}</md-table-cell>
+              <md-table-cell v-for="(cell, index) in row" :value="cell" :key="index">{{cell}}</md-table-cell>
+            </md-table-row>
+          </md-table>
+        </div>
       </div>
     </md-list>
   </div>
@@ -49,8 +71,10 @@ export default {
         result: {},
         startingTime: "",
         finishingTime: "",
-        params: {}
-      }
+        params: {},
+        query: null
+      },
+      queryResult: null
     };
   },
   components: {
@@ -99,6 +123,14 @@ export default {
       result += milliseconds + " msec";
 
       return result;
+    },
+    executeQuery() {
+      const body = {
+        query: this.job.query
+      };
+      axios
+        .post("http://localhost:8080/api/db/query", body)
+        .then(response => (this.queryResult = response.data.result));
     }
   }
 };

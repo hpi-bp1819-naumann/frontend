@@ -63,7 +63,7 @@ export default {
       axios.post("http://localhost:8080/api/settings/uri", {"uri": this.url}).then(response => {
         console.log(response);
       });
-      axios.post("http://localhost:8080/api/settings/user", {"user": this.user}).then(response => {
+      axios.post("http://localhost:8080/api/settings/user", {"user": this.username}).then(response => {
         console.log(response);
       });
       axios.post("http://localhost:8080/api/settings/password", {"password": this.password}).then(response => {

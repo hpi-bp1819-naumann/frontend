@@ -57,6 +57,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('instance')">
             <label>Instance</label>
             <md-input v-model="job.selectedAnalyzer.instance" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">metric instance name, describing what the analysis is being done for<br>e.g. "example"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.instance.required">This field is required</span>-->
           </md-field>
         </div>
@@ -65,6 +66,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('predicate')">
             <label>Predicate</label>
             <md-input v-model="job.selectedAnalyzer.predicate" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">SQL-predicate to apply per row <br>e.g. "Price > 50"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.predicate.required">This field is required</span>-->
           </md-field>
         </div>
@@ -73,6 +75,7 @@
           <md-field :class="getValidationClassForSelectedAnalyzer('patternMatch')">
             <label>Pattern</label>
             <md-input v-model="job.selectedAnalyzer.patternMatch" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">The regular expression to check for <br>e.g. "for | (example)*"</md-tooltip>
             <!--<span class="md-error" v-if="!$v.job.selectedAnalyzer.patternMatch.required">This field is required</span>-->
           </md-field>
         </div>
@@ -81,6 +84,7 @@
           <md-field>
             <label>WHERE</label>
             <md-input v-model="job.selectedAnalyzer.where" spellcheck="false"></md-input>
+            <md-tooltip md-direction="right">Additional filter to apply before the analyzer is run <br>e.g. "Price > 50"</md-tooltip>
           </md-field>
         </div>
 
@@ -137,7 +141,7 @@
     // validations() {
     //   let regularValidation = {
     //     form: {
-    //       "selectedAnalyzer0": {
+    //       selectedAnalyzer: {
     //         table: {required},
     //         column: {required},
     //         instance: {},
@@ -223,22 +227,13 @@
 
         console.log("JOBS: " , this.jobs);
         this.startJobs();
-        // this.$v.$touch();
+        // this.$v.form.$touch();
         // if (!this.$v.$invalid) {
         //   console.log("User is valid!");
         //   this.startJob();
         // } else {
         //   console.log("User in invalid")
         // }
-
-        // this.$v.jobs.$touch();
-        // if (!this.$v.$invalid) {
-        //   console.log("Job is valid!");
-        //   this.startJobs();
-        // } else {
-        //   console.log("Job in invalid")
-        // }
-
       },
       getValidationClassForSelectedAnalyzer(fieldName) {
         // const field = this.$v.selectedAnalyzer[fieldName];
@@ -269,5 +264,9 @@
   .job-selection {
     padding: 20px;
   }
+
+  .md-tooltip {
+    height: auto;
+}
 
 </style>

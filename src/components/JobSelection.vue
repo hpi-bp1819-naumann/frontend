@@ -110,7 +110,7 @@
     name: "JobSelection",
     data() {
       return {
-        areFieldsValid: [true, true, []], //0 tableName, 1 columnName, 2+ []Array of Values for field
+        areFieldsValid: [true, true, []], // 0 tableName, 1 columnName, 2+ [] Array of Values for field
         analyzers: [],
         contexts: ["jdbc", "spark"],
         jobs: [

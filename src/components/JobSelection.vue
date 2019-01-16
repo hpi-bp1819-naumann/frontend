@@ -31,23 +31,19 @@
         </div>
       </div>
 
-      <div class="md-layout md-gutter" v-for="(job, jobIndex) in jobs">
+      <div class="md-layout md-gutter" v-for="(job, jobIndex) in jobs" v-bind:key="jobIndex">
         <div class="md-layout-item md-size-20">
           <md-field>
             <label>Analyzer</label>
-            <md-select
-              v-model="job.selectedAnalyzerIndex"
-              @md-selected="setParamsForSelectedAnalyzer(jobIndex)"
-            >
+            <md-select v-model="job.key" @md-selected="setParamsForSelectedAnalyzer(job)">
               <md-option
                 v-for="(analyzer, index) in analyzers"
-                :value="index"
+                :value="analyzer.key"
                 :key="index"
               >{{analyzer.name}}</md-option>
             </md-select>
           </md-field>
         </div>
-
         <div class="md-layout-item md-size-20" v-if="job.options.column">
           <md-field :class="{'md-invalid': !areFieldsValid[1]}">
             <label>Columnname</label>
@@ -139,10 +135,8 @@ export default {
         {
           options: {},
           columns: ["fat_factor"],
-          where: null,
           key: "",
-          name: null,
-          selectedAnalyzerIndex: 0
+          name: null
         }
       ]
     };
@@ -151,16 +145,13 @@ export default {
     jobs: Jobs
   },
   methods: {
-    setParamsForSelectedAnalyzer(jobIndex) {
-      if (this.analyzers.length === 0) {
-        //at initial loading
+    setParamsForSelectedAnalyzer(jobAnalyzer) {
+      if (this.analyzers.length === 0 || !jobAnalyzer.key) {
         return;
       }
-      let jobAnalyzer = this.jobs[jobIndex];
-
-      let selectedAnalyzer = this.analyzers[
-        this.jobs[jobIndex].selectedAnalyzerIndex
-      ];
+      const selectedAnalyzer = this.analyzers.find(
+        analyzer => analyzer.key === jobAnalyzer.key
+      );
       jobAnalyzer.name = selectedAnalyzer.name;
       jobAnalyzer.key = selectedAnalyzer.key;
 
@@ -250,15 +241,9 @@ export default {
     }
   },
   mounted() {
-    axios
-      .get("http://localhost:8080/api/jobs/analyzers")
-      .then(response => {
-        this.analyzers = response.data.analyzers;
-        this.selectedAnalyzerIndex = 0;
-      })
-      .then(() => {
-        this.setParamsForSelectedAnalyzer(0);
-      });
+    axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
+      this.analyzers = response.data.analyzers;
+    });
   }
 };
 </script>

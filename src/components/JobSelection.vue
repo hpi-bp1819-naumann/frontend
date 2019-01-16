@@ -52,12 +52,28 @@
           </md-field>
         </div>
 
-        <div class="md-layout-item md-size-20" v-if="job.options.columns">
-          <md-field :class="{'md-invalid': !areFieldsValid[1]}">
-            <label>Columns</label>
-            <md-input v-model="job.columns" spellcheck="false" @keyup="validateForm"></md-input>
-            <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
-          </md-field>
+        <div class="md-layout md-gutter" v-if="job.options.columns">
+          <div
+            class="md-layout-item md-size-20"
+            v-for="(column, index) in job.columns"
+            v-bind:key="index"
+          >
+            <md-field :class="{'md-invalid': !areFieldsValid[1]}">
+              <label>Column {{index+1}}</label>
+              <md-input v-model="job.columns[index]" spellcheck="false" @keyup="validateForm"></md-input>
+              <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
+            </md-field>
+          </div>
+          <div v-if="job.columns.length > 1" class="add-column">
+            <md-button class="md-icon-button" @click="removeLastColumn(job)">
+              <i class="fas fa-minus"></i>
+            </md-button>
+          </div>
+          <div class="add-column">
+            <md-button class="md-icon-button" @click="addColumn(job)">
+              <i class="fas fa-plus"></i>
+            </md-button>
+          </div>
         </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.instance">
@@ -134,7 +150,7 @@ export default {
       jobs: [
         {
           options: {},
-          columns: ["fat_factor"],
+          columns: ["fat_factor", "survey"],
           key: "",
           name: null
         }
@@ -145,21 +161,25 @@ export default {
     jobs: Jobs
   },
   methods: {
-    setParamsForSelectedAnalyzer(jobAnalyzer) {
-      if (this.analyzers.length === 0 || !jobAnalyzer.key) {
+    setParamsForSelectedAnalyzer(job) {
+      if (this.analyzers.length === 0 || !job.key) {
         return;
       }
       const selectedAnalyzer = this.analyzers.find(
-        analyzer => analyzer.key === jobAnalyzer.key
+        analyzer => analyzer.key === job.key
       );
-      jobAnalyzer.name = selectedAnalyzer.name;
-      jobAnalyzer.key = selectedAnalyzer.key;
+      job.name = selectedAnalyzer.name;
+      job.key = selectedAnalyzer.key;
 
-      jobAnalyzer.options = selectedAnalyzer.parameters.reduce((a, b) => {
+      job.options = selectedAnalyzer.parameters.reduce((a, b) => {
         const name = b.name;
         a[name] = true;
         return a;
       }, {});
+
+      if (job.options.column) {
+        job.columns = [job.columns[0]];
+      }
     },
     startSingleJob: function(jobAnalyzer) {
       let requestObject = {
@@ -238,6 +258,14 @@ export default {
     copyJob: function() {
       this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
       this.areFieldsValid.push([]);
+    },
+    removeLastColumn(job) {
+      if (job.columns.length > 1) {
+        job.columns.splice(-1, 1);
+      }
+    },
+    addColumn(job) {
+      job.columns.push("");
     }
   },
   mounted() {
@@ -251,6 +279,10 @@ export default {
 <style>
 .job-selection {
   padding: 20px;
+}
+
+.add-column {
+  padding-top: 13px;
 }
 
 .md-tooltip {

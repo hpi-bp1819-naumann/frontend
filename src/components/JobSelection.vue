@@ -32,6 +32,11 @@
       </div>
 
       <div class="md-layout md-gutter" v-for="(job, jobIndex) in jobs" v-bind:key="jobIndex">
+        <div v-if="jobs.length > 1" class="add-column">
+          <md-button class="md-icon-button" @click="removeJob(jobIndex)">
+            <i class="fas fa-times"></i>
+          </md-button>
+        </div>
         <div class="md-layout-item md-size-20">
           <md-field>
             <label>Analyzer</label>
@@ -124,10 +129,12 @@
 
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-20">
-          <md-button @click="copyJob" class="md-dense md-raised">Copy Job</md-button>
+          <md-button @click="copyJob" class="md-dense md-raised">
+            <i class="fas fa-plus"></i> Add Job
+          </md-button>
         </div>
+        <md-button type="submit" class="md-dense md-raised md-primary">Start Job</md-button>
       </div>
-      <md-button type="submit" class="md-dense md-raised md-primary">Start Job</md-button>
     </form>
 
     <jobs ref="jobsOverview"></jobs>
@@ -150,7 +157,7 @@ export default {
       jobs: [
         {
           options: {},
-          columns: ["fat_factor", "survey"],
+          columns: ["fat_factor"],
           key: "",
           name: null
         }
@@ -258,6 +265,9 @@ export default {
     copyJob: function() {
       this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
       this.areFieldsValid.push([]);
+    },
+    removeJob: function(index) {
+      this.jobs.splice(index, 1);
     },
     removeLastColumn(job) {
       if (job.columns.length > 1) {

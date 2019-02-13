@@ -45,7 +45,12 @@
                 v-for="(analyzer, index) in analyzers"
                 :value="analyzer.key"
                 :key="index"
-              >{{analyzer.name}}</md-option>
+              >
+              {{analyzer.name}}
+                <md-tooltip md-direction="right">
+                  {{analyzer.description}}
+                </md-tooltip>
+              </md-option>
             </md-select>
           </md-field>
         </div>

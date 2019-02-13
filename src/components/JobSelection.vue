@@ -140,6 +140,11 @@
         </div>
         <md-button type="submit" class="md-dense md-raised md-primary">Start Job</md-button>
       </div>
+
+      <div>
+        <md-button :href="pageUrl" class="md-primary">More information on the analyzers</md-button>
+      </div>
+      
     </form>
 
     <jobs ref="jobsOverview"></jobs>
@@ -287,7 +292,12 @@ export default {
     axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
       this.analyzers = response.data.analyzers;
     });
-  }
+  },
+    computed: {
+      pageUrl () {
+        return "https://github.com/hpi-bp1819-naumann/deequ/wiki/Analyzers";
+      }
+    }
 };
 </script>
 

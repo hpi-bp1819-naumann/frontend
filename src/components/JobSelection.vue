@@ -1,11 +1,7 @@
 <template>
   <div class="job-selection md-elevation-1">
-    <div class="md-layout md-gutter">
-      <router-link to="/dashboard">
-        <md-button class="md-raised md-primary">menu</md-button>
-      </router-link>
-      <div class="md-display-2">Select Job</div>
-    </div>
+
+    <div class="md-display-2">Select Job</div>
 
     <form novalidate @submit.prevent="startJobs">
       <div class="md-layout md-gutter">

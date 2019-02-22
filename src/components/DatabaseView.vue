@@ -1,9 +1,7 @@
 <template>
   <div class="db-view md-elevation-1">
-    <div class="md-layout md-gutter">
-      <router-link to="/dashboard"><md-button class="md-raised md-primary">menu</md-button></router-link>
-      <div class="md-display-2">Database View</div>
-    </div>
+
+    <div class="md-display-2">Database View</div>
 
     <div class="md-layout md-gutter">
 
@@ -11,9 +9,7 @@
         <md-field>
           <label>Tables</label>
           <md-select v-model="selectedTable">
-            <md-option v-for="(item, index) in tables"
-                      :value="item"
-                      :key="index">
+            <md-option v-for="(item, index) in tables" :value="item" :key="index">
               {{ item }}
             </md-option>
           </md-select>

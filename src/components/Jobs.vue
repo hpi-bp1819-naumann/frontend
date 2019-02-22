@@ -31,7 +31,6 @@
               </span>
               <span v-else class="md-list-item-text"> Result: {{job.result.value}} </span>
 
-
               <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
               <md-button class="md-icon-button" @click="deleteJob(job.id, index)">
                 <i class="fas fa-trash"></i>

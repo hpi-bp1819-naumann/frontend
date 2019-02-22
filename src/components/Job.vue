@@ -28,21 +28,17 @@
           <histogram :frequencies="job.result.value.values" type="pie"></histogram>
         </div>
         <md-list-item v-else>Result: {{this.job.result.value}}</md-list-item>
-        <md-button
-          v-if="job.query"
-          class="md-dense md-raised md-primary"
-          @click="executeQuery()"
-        >Execute Query</md-button>
+        <md-button v-if="job.query" class="md-dense md-raised md-primary" @click="executeQuery()">
+          Execute Query
+        </md-button>
 
         <div v-if="queryResult" class="md-layout-item">
           <md-table md-card>
             <md-table-row>
               <md-table-head>index</md-table-head>
-              <md-table-head
-                v-for="(item, index) in queryResult.columns"
-                :value="item"
-                :key="index"
-              >{{item}}</md-table-head>
+              <md-table-head v-for="(item, index) in queryResult.columns" :value="item" :key="index">
+                {{item}}
+              </md-table-head>
             </md-table-row>
             <md-table-row v-for="(row, index) in queryResult.data" :value="row" :key="index">
               <md-table-cell>{{index + 1}}</md-table-cell>

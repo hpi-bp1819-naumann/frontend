@@ -3,6 +3,14 @@
 
     <div class="md-display-2">Database View</div>
 
+    <div class="md-layout-item " v-if="tables.length === 0 ">
+      <div class="error-message">
+        No tables shown? Check if you have the backend running and CORS enabled in your browser
+        <a href="https://github.com/hpi-bp1819-naumann/frontend#troubleshooting" target="_blank"> troubleshooting </a>
+        for more information).
+      </div>
+    </div>
+
     <div class="md-layout md-gutter">
 
       <div class="md-layout-item md-size-20">

@@ -1,11 +1,7 @@
 <template>
   <div class="job-selection md-elevation-1">
-    <div class="md-layout md-gutter">
-      <router-link to="/dashboard">
-        <md-button class="md-raised md-primary">menu</md-button>
-      </router-link>
-      <div class="md-display-2">Select Job</div>
-    </div>
+
+    <div class="md-display-2">Select Job</div>
 
     <form novalidate @submit.prevent="startJobs">
       <div class="md-layout md-gutter">
@@ -13,11 +9,9 @@
           <md-field>
             <label>Context</label>
             <md-select v-model="context">
-              <md-option
-                v-for="(context, index) in contexts"
-                :key="index"
-                :value="context"
-              >{{context}}</md-option>
+              <md-option v-for="(context, index) in contexts" :key="index" :value="context">
+                {{context}}
+              </md-option>
             </md-select>
           </md-field>
         </div>
@@ -37,15 +31,12 @@
             <i class="fas fa-times"></i>
           </md-button>
         </div>
+
         <div class="md-layout-item md-size-20">
           <md-field>
             <label>Analyzer</label>
             <md-select v-model="job.key" @md-selected="setParamsForSelectedAnalyzer(job)">
-              <md-option
-                v-for="(analyzer, index) in analyzers"
-                :value="analyzer.key"
-                :key="index"
-              >
+              <md-option v-for="(analyzer, index) in analyzers" :value="analyzer.key" :key="index">
               {{analyzer.name}}
                 <md-tooltip md-direction="right">
                   {{analyzer.description}}
@@ -54,6 +45,15 @@
             </md-select>
           </md-field>
         </div>
+
+        <div class="md-layout-item " v-if="analyzers.length == 0">
+          <div class="error-message">
+            No analyzers shown? Check if you have CORS enabled in your browser (see
+            <a href="https://github.com/hpi-bp1819-naumann/frontend#troubleshooting" target="_blank"> troubleshooting </a>
+            for more information).
+          </div>
+        </div>
+
         <div class="md-layout-item md-size-20" v-if="job.options.column">
           <md-field :class="{'md-invalid': !areFieldsValid[1]}">
             <label>Columnname</label>
@@ -81,8 +81,7 @@
           <div
             class="md-layout-item md-size-20"
             v-for="(column, index) in job.columns"
-            v-bind:key="index"
-          >
+            v-bind:key="index">
             <md-field :class="{'md-invalid': !areFieldsValid[1]}">
               <label>Column {{index+1}}</label>
               <md-input v-model="job.columns[index]" spellcheck="false" @keyup="validateForm"></md-input>
@@ -105,10 +104,9 @@
           <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">
             <label>Instance</label>
             <md-input v-model="job.instance" spellcheck="false" @keyup="validateForm"></md-input>
-            <md-tooltip
-              md-direction="right"
-            >metric instance name, describing what the analysis is being done for
-              <br>e.g. "example"
+            <md-tooltip md-direction="right">
+                metric instance name, describing what the analysis is being done for <br>
+                e.g. "example"
             </md-tooltip>
             <span class="md-error" v-if="!areFieldsValid[jobIndex+2][0]">This field is required</span>
           </md-field>
@@ -140,8 +138,9 @@
           <md-field>
             <label>WHERE</label>
             <md-input v-model="job.where" spellcheck="false"></md-input>
-            <md-tooltip md-direction="right">Additional filter to apply before the analyzer is run
-              <br>e.g. "Price > 50"
+            <md-tooltip md-direction="right">
+              Additional filter to apply before the analyzer is run <br>
+              e.g. "Price > 50"
             </md-tooltip>
           </md-field>
         </div>
@@ -335,5 +334,12 @@ export default {
 
 .md-tooltip {
   height: auto;
+}
+
+.error-message{
+  color: #ff1744;
+  height: 100%;
+  vertical-align: middle;
+  line-height: 76px;
 }
 </style>

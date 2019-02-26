@@ -19,7 +19,7 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 
 ### Troubleshooting
 
-There might be problems with Cross-Origin Resource Sharing (CORS) because the Backend will run on `localhost:8080` and the frontend will run `localhost:3000`.
+There might be problems with Cross-Origin Resource Sharing (CORS) because the Backend will run on `localhost:8080` and the frontend will run on `localhost:3000`.
 
 ``` bash
 

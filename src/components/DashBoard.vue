@@ -18,7 +18,7 @@
         </md-field>
         <md-field>
           <label>password</label>
-          <md-input v-model="password" spellcheck="false"></md-input>
+          <md-input v-model="password" type="password" spellcheck="false"></md-input>
         </md-field>
       </div>
 

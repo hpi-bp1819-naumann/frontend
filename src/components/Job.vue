@@ -32,13 +32,6 @@
       <div class="md-layout-item md-size-30 column-right"> {{msToTime(this.job.finishingTime - this.job.startingTime)}}</div>
     </div>
 
-
-    <div class="md-layout" v-if="job.status === 'completed'">
-      <div class="md-layout-item md-size-10 column-left">Finished:</div>
-      <div class="md-layout-item md-size-30 column-right"> {{this.job.finishingTime.toLocaleString()}}</div>
-    </div>
-
-
     <div v-if="job.status === 'completed'">
       <div v-if="job.name === 'Histogram'">
         <br>

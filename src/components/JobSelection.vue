@@ -17,10 +17,13 @@
         </div>
 
         <div class="md-layout-item md-size-20">
-          <md-field :class="{'md-invalid': !areFieldsValid[0]}">
-            <label>Tablename</label>
-            <md-input ref="tableName" v-model="table" spellcheck="false" @keyup="validateForm"></md-input>
-            <span class="md-error" v-if="!areFieldsValid[0]">This field is required</span>
+          <md-field>
+            <label>Table</label>
+            <md-select v-model="selectedTable">
+              <md-option v-for="(item, index) in tables" :value="item" :key="index">
+                {{ item }}
+              </md-option>
+            </md-select>
           </md-field>
         </div>
       </div>
@@ -177,7 +180,7 @@ export default {
       analyzers: [],
       contexts: ["jdbc", "spark"],
       context: "jdbc",
-      table: "food_des",
+      selectedTable: "",
       jobs: [
         {
           options: {},
@@ -185,7 +188,8 @@ export default {
           key: "",
           name: null
         }
-      ]
+      ],
+      tables: []
     };
   },
   components: {
@@ -218,7 +222,7 @@ export default {
     startSingleJob: function(jobAnalyzer) {
       let requestObject = {
         context: this.context,
-        table: this.table,
+        table: this.selectedTable,
         where: jobAnalyzer.where,
         instance: jobAnalyzer.instance,
         predicate: jobAnalyzer.predicate,
@@ -313,6 +317,10 @@ export default {
   mounted() {
     axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
       this.analyzers = response.data.analyzers;
+    });
+    axios.get("http://localhost:8080/api/db/tables").then(response => {
+      this.tables = response.data.tables;
+      this.selectedTable = this.tables[0];
     });
   },
     computed: {

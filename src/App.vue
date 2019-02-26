@@ -3,16 +3,16 @@
   <div id="app">
     <div>
       <md-tabs router-link>
-        <md-tab md-label="DB Connection" to="/connection">
-          <Dashboard></Dashboard>
-        </md-tab>
-
         <md-tab md-label="Job Selection" to="/jobs">
           <JobSelection></JobSelection>
         </md-tab>
 
         <md-tab md-label="Data Exploration" to="/dbview">
           <Databaseview></Databaseview>
+        </md-tab>
+
+        <md-tab md-label="Settings" to="/connection">
+          <Dashboard></Dashboard>
         </md-tab>
       </md-tabs>
     </div>

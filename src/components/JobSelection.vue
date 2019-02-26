@@ -219,7 +219,7 @@ export default {
       let requestObject = {
         context: this.context,
         table: this.table,
-        where: jobAnalyzer.where,
+        where: jobAnalyzer.where ? jobAnalyzer.where : null,
         instance: jobAnalyzer.instance,
         predicate: jobAnalyzer.predicate,
         patternMatch: jobAnalyzer.patternMatch

@@ -48,7 +48,7 @@
 
         <div class="md-layout-item " v-if="analyzers.length == 0">
           <div class="error-message">
-            No analyzers shown? Check if you have CORS enabled in your browser (see
+            No analyzers shown? Check if you have the backend running and CORS enabled in your browser (see
             <a href="https://github.com/hpi-bp1819-naumann/frontend#troubleshooting" target="_blank"> troubleshooting </a>
             for more information).
           </div>

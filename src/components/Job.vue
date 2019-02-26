@@ -166,6 +166,7 @@
     font-size: 16px;
     line-height: 20px;
     margin-bottom: 4px;
+    margin-left: 11px;
     font-weight: 500;
   }
 
@@ -173,6 +174,7 @@
     margin-top: 16px;
     font-size: 18px;
     font-weight: 500;
+    margin-left: 0;
     /*background-color: orange;*/
   }
 </style>

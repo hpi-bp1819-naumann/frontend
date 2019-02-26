@@ -19,9 +19,9 @@
         <div class="md-layout-item md-size-20">
           <md-field>
             <label>Table</label>
-            <md-select v-model="selectedTable">
-              <md-option v-for="(item, index) in tables" :value="item" :key="index">
-                {{ item }}
+            <md-select v-model="selectedTable"> 
+              <md-option v-for="(item, index) in data" :value="item.table" :key="index">
+                {{ item.table }}
               </md-option>
             </md-select>
           </md-field>
@@ -59,8 +59,12 @@
 
         <div class="md-layout-item md-size-20" v-if="job.options.column">
           <md-field :class="{'md-invalid': !areFieldsValid[1]}">
-            <label>Columnname</label>
-            <md-input v-model="job.columns[0]" spellcheck="false" @keyup="validateForm"></md-input>
+            <label>Column</label>
+            <md-select v-model="job.columns[0]">
+              <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
+                {{ item.name }}
+              </md-option>
+            </md-select>
             <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
           </md-field>
         </div>
@@ -68,14 +72,22 @@
         <div class="md-layout-item md-size-20" v-if="job.options.firstColumn">
           <md-field :class="{'md-invalid': !areFieldsValid[1]}">
             <label>Column 1</label>
-            <md-input v-model="job.columns[0]" spellcheck="false" @keyup="validateForm"></md-input>
+            <md-select v-model="job.columns[0]">
+              <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
+                {{ item.name }}
+              </md-option>
+            </md-select>
             <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
           </md-field>
         </div>
         <div class="md-layout-item md-size-20" v-if="job.options.secondColumn">
           <md-field :class="{'md-invalid': !areFieldsValid[1]}">
             <label>Column 2</label>
-            <md-input v-model="job.columns[1]" spellcheck="false" @keyup="validateForm"></md-input>
+            <md-select v-model="job.columns[1]">
+              <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
+                {{ item.name }}
+              </md-option>
+            </md-select>
             <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
           </md-field>
         </div>
@@ -87,7 +99,11 @@
             v-bind:key="index">
             <md-field :class="{'md-invalid': !areFieldsValid[1]}">
               <label>Column {{index+1}}</label>
-              <md-input v-model="job.columns[index]" spellcheck="false" @keyup="validateForm"></md-input>
+              <md-select v-model="job.columns[index]">
+              <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
+                {{ item.name }}
+              </md-option>
+            </md-select>
               <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
             </md-field>
           </div>
@@ -176,6 +192,7 @@ export default {
   name: "JobSelection",
   data() {
     return {
+      test: "",
       areFieldsValid: [true, true, []], // 0 tableName, 1 columnName, 2+ [] Array of Values for field
       analyzers: [],
       contexts: ["jdbc", "spark"],
@@ -184,12 +201,13 @@ export default {
       jobs: [
         {
           options: {},
-          columns: ["fat_factor"],
+          columns: [""],
           key: "",
           name: null
         }
       ],
-      tables: []
+      data: [],
+      columns: []
     };
   },
   components: {
@@ -216,7 +234,7 @@ export default {
         job.columns = [job.columns[0]];
       }
       if (job.options.secondColumn){
-        job.columns.push("pro_factor");
+        job.columns.push("");
       }
     },
     startSingleJob: function(jobAnalyzer) {
@@ -318,12 +336,21 @@ export default {
     axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
       this.analyzers = response.data.analyzers;
     });
-    axios.get("http://localhost:8080/api/db/tables").then(response => {
-      this.tables = response.data.tables;
-      this.selectedTable = this.tables[0];
+    axios.get("http://localhost:8080/api/db/data").then(response => {
+      this.data = response.data;
+      this.selectedTable = this.data[0].table;
     });
   },
-    computed: {
+  watch: {
+      selectedTable: function () {
+        this.data.forEach(tabledata => {
+          if (tabledata.table == this.selectedTable){
+            this.columns = tabledata.columns;
+          }
+        })
+      }
+    },
+  computed: {
       pageUrl () {
         return "https://github.com/hpi-bp1819-naumann/deequ/wiki/Analyzers";
       }

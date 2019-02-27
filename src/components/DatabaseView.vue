@@ -115,7 +115,7 @@
     mounted() {
       axios.get("http://localhost:8080/api/db/tables").then(response => {
         this.tables = response.data.tables;
-        this.selectedTable = this.tables[4];
+        this.selectedTable = this.tables[0];
       });
       axios.get("http://localhost:8080/api/db/version/db").then(response => {
         this.database = response.data;

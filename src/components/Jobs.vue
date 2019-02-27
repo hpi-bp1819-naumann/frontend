@@ -21,7 +21,7 @@
         <div class="md-layout-item md-size-80">
           <md-list class="custom-md-list">
             <md-list-item v-for="(job, index) in failedJobs" :key="index">
-              <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
+              <span class="md-list-item-text">{{index + 1}}. {{job.name}} <i class="fas fa-question" @click="openExplanationPage(job.name)"></i> </span>
               <span class="md-list-item-text">Started: {{job.startingTime.toLocaleString()}}</span>
 
               <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
@@ -40,7 +40,7 @@
         <div class="md-layout-item md-size-80">
           <md-list class="custom-md-list">
             <md-list-item v-for="(job, index) in completedJobs" :key="index">
-              <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
+              <span class="md-list-item-text">{{index + 1}}. {{job.name}} <i class="fas fa-question" @click="openExplanationPage(job.name)"></i> </span>
               <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
               
               <span v-if="job.name === 'Histogram'" class="md-list-item-text">Result: too long</span>
@@ -161,15 +161,24 @@ export default {
       return keys.reduce((max, curr) =>
         values[max].absolute > values[curr].absolute ? max : curr
       );
+    },
+    openExplanationPage(keyword){
+      window.open("https://github.com/hpi-bp1819-naumann/deequ/blob/jdbc-analyzers/doc/analyzerDoc.md#" + keyword);
     }
   }
 };
 </script>
 
 <style scoped>
-.custom-md-list {
-  background-color: transparent !important;
-}
+  .custom-md-list {
+    background-color: transparent !important;
+  }
+
+  .md-list-item-text{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+  }
 
   #pending, 
   #completed {
@@ -181,5 +190,12 @@ export default {
     max-width: 98%;
     min-height: 50%;
     min-width: 70%;
+  }
+
+  .fa-question{
+    color: #929292;
+    font-size: 10px;
+    margin-left: 2px;
+    cursor: pointer;
   }
 </style>

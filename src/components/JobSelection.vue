@@ -178,7 +178,7 @@
       </div>
 
       <div>
-        <md-button :href="pageUrl" class="md-primary">More information on the analyzers</md-button>
+        <md-button @click="openMoreInformationLink" class="md-primary">More information on the analyzers</md-button>
       </div>
 
     </form>
@@ -343,6 +343,9 @@
         });
         this.validateForm();
       },
+      openMoreInformationLink: function(){
+        window.open("https://github.com/hpi-bp1819-naumann/deequ/blob/jdbc-analyzers/doc/analyzerDoc.md#histogram");
+      }
     },
     mounted() {
       axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
@@ -364,11 +367,6 @@
         })
       }
     },
-    computed: {
-      pageUrl() {
-        return "https://github.com/hpi-bp1819-naumann/deequ/wiki/Analyzers";
-      }
-    }
   };
 </script>
 

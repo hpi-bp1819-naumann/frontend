@@ -4,6 +4,7 @@ import DashBoard from "../components/DashBoard";
 import JobSelection from "../components/JobSelection";
 import Job from "../components/Job";
 import DatabaseView from "../components/DatabaseView";
+import ColumnProfiler from "../components/ColumnProfiler";
 
 Vue.use(Router);
 
@@ -13,6 +14,10 @@ const router = new Router({
     {
       path: "/dashboard",
       component: DashBoard
+    },
+    {
+      path: "/columnprofiler",
+      component: ColumnProfiler
     },
     {
       path: "/dbview",

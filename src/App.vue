@@ -7,6 +7,10 @@
           <JobSelection></JobSelection>
         </md-tab>
 
+        <md-tab md-label="Column Profiler" to="/connection">
+          <ColumnProfiler></ColumnProfiler>
+        </md-tab>
+
         <md-tab md-label="Data Exploration" to="/dbview">
           <Databaseview></Databaseview>
         </md-tab>
@@ -30,9 +34,10 @@
 import JobSelection from './components/JobSelection'
 import Dashboard from './components/DashBoard'
 import Databaseview from './components/DatabaseView'
+import ColumnProfiler from './components/ColumnProfiler'
 
 export default {
   name: "app",
-  components: {JobSelection, Dashboard, Databaseview}
+  components: {JobSelection, Dashboard, Databaseview, ColumnProfiler}
 };
 </script>

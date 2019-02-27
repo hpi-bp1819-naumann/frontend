@@ -47,8 +47,8 @@
     <div class="md-layout md-gutter">
 
       <div class="md-layout-item md-size-20">
-        <md-table v-model="data.columns" md-card>
-          <md-table-row slot="md-table-row" slot-scope="{ item }">
+        <md-table v-model="columns" md-card>
+          <md-table-row slot="md-table-row" slot-scope="{item}">
             <md-table-cell md-label="Column">{{item.name}}</md-table-cell>
             <md-table-cell md-label="Datatype">{{item.dataType}}</md-table-cell>
           </md-table-row>
@@ -77,7 +77,7 @@
       </div>
 
     </div>
-
+    
   </div>
 </template>
 
@@ -94,7 +94,8 @@
         data: {},
         database: "",
         jdbcversion: "",
-        numberOfRows: 10
+        numberOfRows: 10,
+        columns: []
       };
     },
     watch: {
@@ -102,6 +103,7 @@
         axios.get(`http://localhost:8080/api/db/data/${this.selectedTable}`).then(response =>{
             this.data = response.data;
             this.numberOfRows = 10;
+            this.columns = this.data.columns;
         })
       }
     },

@@ -32,14 +32,20 @@
     <div v-for="(column, key) in data.jobs[0].result.profiles" :key="key">
         <div class="md-layout md-gutter">
 
-            <div class="md-layout-item md-size-40">
+            <div class="md-layout-item md-size-50">
                         
                 <div class="md-title heading"> {{column.column}} </div>
                 <br>
                 <md-table>
                     <md-table-row>
-                        <md-table-cell>Datatype:</md-table-cell>
-                        <md-table-cell>{{column.dataType}}</md-table-cell>
+                        <md-table-cell>Datatype counts:</md-table-cell>
+                        <md-table-cell>
+                            Boolean: {{column.typeCounts.Boolean}} <br>
+                            Fractional: {{column.typeCounts.Fractional}} <br>
+                            Integral: {{column.typeCounts.Integral}} <br>
+                            Unknown: {{column.typeCounts.Unknown}} <br>
+                            String: {{column.typeCounts.String}}
+                        </md-table-cell>
                     </md-table-row>
                     <md-table-row>
                         <md-table-cell>Is DataType inferred:</md-table-cell>
@@ -76,7 +82,7 @@
                 </md-table>
             </div>
 
-            <div class="md-layout-item md-size-60">
+            <div class="md-layout-item md-size-50">
 
             <div v-if="column.histogram">
             <histogram :frequencies="column.histogram.values" type="bar"></histogram>

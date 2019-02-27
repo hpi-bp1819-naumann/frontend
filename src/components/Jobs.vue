@@ -47,7 +47,7 @@
               <span v-else-if="job.name === 'DataType'" class="md-list-item-text">
                 Result: {{getMaximumAbsoluteValue(job.result.values)}}
               </span>
-              <span v-else class="md-list-item-text"> Result: {{job.result}} </span>
+              <span v-else class="md-list-item-text"> Result: {{job.result.value}} </span>
 
               <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
               <md-button class="md-icon-button" @click="deleteCompletedJob(job.id, index)">

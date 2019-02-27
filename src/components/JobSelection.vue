@@ -19,7 +19,7 @@
         <div class="md-layout-item md-size-20">
           <md-field>
             <label>Table</label>
-            <md-select v-model="selectedTable"> 
+            <md-select v-model="selectedTable" @md-selected="clearColumns">
               <md-option v-for="(item, index) in data" :value="item.table" :key="index">
                 {{ item.table }}
               </md-option>
@@ -40,7 +40,7 @@
             <label>Analyzer</label>
             <md-select v-model="job.key" @md-selected="setParamsForSelectedAnalyzer(job)">
               <md-option v-for="(analyzer, index) in analyzers" :value="analyzer.key" :key="index">
-              {{analyzer.name}}
+                {{analyzer.name}}
                 <md-tooltip md-direction="right">
                   {{analyzer.description}}
                 </md-tooltip>
@@ -52,105 +52,107 @@
         <div class="md-layout-item " v-if="analyzers.length == 0">
           <div class="error-message">
             No analyzers shown? Check if you have the backend running and CORS enabled in your browser (see
-            <a href="https://github.com/hpi-bp1819-naumann/frontend#troubleshooting" target="_blank"> troubleshooting </a>
+            <a href="https://github.com/hpi-bp1819-naumann/frontend#troubleshooting" target="_blank">
+              troubleshooting </a>
             for more information).
           </div>
         </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.column">
-          <md-field :class="{'md-invalid': !areFieldsValid[1]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][0]}">
             <label>Column</label>
-            <md-select v-model="job.columns[0]">
+            <md-select v-model="job.columns[0]" @md-selected="validateForm">
               <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
                 {{ item.name }}
               </md-option>
             </md-select>
-            <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][0]">This field is required</span>
           </md-field>
         </div>
 
+        <!-- Correlation -->
         <div class="md-layout-item md-size-20" v-if="job.options.firstColumn">
-          <md-field :class="{'md-invalid': !areFieldsValid[1]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][0]}">
             <label>Column 1</label>
-            <md-select v-model="job.columns[0]">
+            <md-select v-model="job.columns[0]" @md-selected="validateForm">
               <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
                 {{ item.name }}
               </md-option>
             </md-select>
-            <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][0]">This field is required</span>
           </md-field>
         </div>
         <div class="md-layout-item md-size-20" v-if="job.options.secondColumn">
-          <md-field :class="{'md-invalid': !areFieldsValid[1]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][1]}">
             <label>Column 2</label>
-            <md-select v-model="job.columns[1]">
+            <md-select v-model="job.columns[1]" @md-selected="validateForm">
               <md-option v-for="(item, index) in columns" :value="item.name" :key="index">
                 {{ item.name }}
               </md-option>
             </md-select>
-            <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][1]">This field is required</span>
           </md-field>
         </div>
 
-          <div class="md-layout-item md-size-20"
-               v-if="job.options.columns"
-            v-for="(column, index) in job.columns"
-            v-bind:key="index">
-            <md-field :class="{'md-invalid': !areFieldsValid[1]}">
-              <label>Column {{index+1}}</label>
-              <md-select v-model="job.columns[index]">
+
+        <div class="md-layout-item md-size-20" v-if="job.options.columns" v-for="(column, index) in job.columns"
+             v-bind:key="index">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][index]}">
+            <label>Column {{index+1}}</label>
+
+            <md-select v-model="job.columns[index]" @md-selected="validateForm">
               <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
                 {{ item.name }}
               </md-option>
             </md-select>
-              <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
-            </md-field>
-          </div>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][index]">This field is required</span>
+          </md-field>
+        </div>
 
-          <div v-if="job.options.columns" class="md-layout">
-            <div v-if="job.columns.length > 1" class="add-column">
-              <md-button class="md-icon-button" @click="removeLastColumn(job)">
-                <i class="fas fa-minus"></i>
-              </md-button>
-            </div>
-            <div class="add-column">
-              <md-button class="md-icon-button" @click="addColumn(job)">
-                <i class="fas fa-plus"></i>
-              </md-button>
-            </div>
+        <div v-if="job.options.columns" class="md-layout">
+          <div v-if="job.columns.length > 1" class="add-column">
+            <md-button class="md-icon-button" @click="removeLastColumn(job)">
+              <i class="fas fa-minus"></i>
+            </md-button>
           </div>
+          <div class="add-column">
+            <md-button class="md-icon-button" @click="addColumn(job)">
+              <i class="fas fa-plus"></i>
+            </md-button>
+          </div>
+        </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.instance">
-          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][0]}">
             <label>Instance</label>
             <md-input v-model="job.instance" spellcheck="false" @keyup="validateForm"></md-input>
             <md-tooltip md-direction="right">
-                metric instance name, describing what the analysis is being done for <br>
-                e.g. "example"
+              metric instance name, describing what the analysis is being done for <br>
+              e.g. "example"
             </md-tooltip>
-            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][0]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][0]">This field is required</span>
           </md-field>
         </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.predicate">
-          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][1]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][1]}">
             <label>Predicate</label>
             <md-input v-model="job.predicate" spellcheck="false" @keyup="validateForm"></md-input>
             <md-tooltip md-direction="right">SQL-predicate to apply per row
               <br>e.g. "Price > 50"
             </md-tooltip>
-            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][1]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][1]">This field is required</span>
           </md-field>
         </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.pattern">
-          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][1]}">
             <label>Pattern</label>
             <md-input v-model="job.patternMatch" spellcheck="false" @keyup="validateForm"></md-input>
             <md-tooltip md-direction="right">The regular expression to check for
               <br>e.g. "for | (example)*"
             </md-tooltip>
-            <span class="md-error" v-if="!areFieldsValid[jobIndex+2][0]">This field is required</span>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][1]">This field is required</span>
           </md-field>
         </div>
 
@@ -178,7 +180,7 @@
       <div>
         <md-button :href="pageUrl" class="md-primary">More information on the analyzers</md-button>
       </div>
-      
+
     </form>
 
     <jobs ref="jobsOverview"></jobs>
@@ -187,194 +189,206 @@
 
 
 <script>
-import axios from "axios";
-import Jobs from "./Jobs";
-export default {
-  name: "JobSelection",
-  data() {
-    return {
-      areFieldsValid: [true, true, []], // 0 tableName, 1 columnName, 2+ [] Array of Values for field
-      analyzers: [],
-      contexts: ["jdbc", "spark"],
-      context: "jdbc",
-      selectedTable: "",
-      jobs: [
-        {
-          options: {},
-          columns: [""],
-          key: "",
-          name: null
-        }
-      ],
-      data: [],
-      columns: []
-    };
-  },
-  components: {
-    jobs: Jobs
-  },
-  methods: {
-    setParamsForSelectedAnalyzer(job) {
-      if (this.analyzers.length === 0 || !job.key) {
-        return;
-      }
-      const selectedAnalyzer = this.analyzers.find(
-        analyzer => analyzer.key === job.key
-      );
-      job.name = selectedAnalyzer.name;
-      job.key = selectedAnalyzer.key;
+  import axios from "axios";
+  import Jobs from "./Jobs";
 
-      job.options = selectedAnalyzer.parameters.reduce((a, b) => {
-        const name = b.name;
-        a[name] = true;
-        return a;
-      }, {});
-      
-      if (job.options.column) {
-        job.columns = [job.columns[0]];
-      }
-      if (job.options.secondColumn){
-        job.columns.push("");
-      }
-    },
-    startSingleJob: function(jobAnalyzer) {
-      let requestObject = {
-        context: this.context,
-        table: this.selectedTable,
-        where: jobAnalyzer.where ? jobAnalyzer.where : null,
-        instance: jobAnalyzer.instance,
-        predicate: jobAnalyzer.predicate,
-        patternMatch: jobAnalyzer.patternMatch
+  export default {
+    name: "JobSelection",
+    data() {
+      return {
+        areFieldsValid: [[false]], // ,
+        analyzers: [],
+        contexts: ["jdbc", "spark"],
+        context: "jdbc",
+        selectedTable: "",
+        jobs: [
+          {
+            options: {},
+            columns: [""],
+            key: "",
+            name: null
+          }
+        ],
+        data: [],
+        columns: []
       };
+    },
+    components: {
+      jobs: Jobs
+    },
+    methods: {
+      setParamsForSelectedAnalyzer(job) {
+        if (this.analyzers.length === 0 || !job.key) {
+          return;
+        }
+        const selectedAnalyzer = this.analyzers.find(
+          analyzer => analyzer.key === job.key
+        );
+        job.name = selectedAnalyzer.name;
+        job.key = selectedAnalyzer.key;
 
-      if (jobAnalyzer.options.column) {
-        requestObject.column = jobAnalyzer.columns[0];
-      } else if (jobAnalyzer.options.columns) {
-        requestObject.columns = jobAnalyzer.columns;
-      } else if (jobAnalyzer.key = "correlation") {
-        console.log("in");
-        requestObject.firstColumn = jobAnalyzer.columns[0];
-        requestObject.secondColumn = jobAnalyzer.columns[1];
-        console.log(requestObject);
-      }
-      console.log("requestObject: ", requestObject);
-      return axios.post(
-        `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
-        requestObject
-      );
-    },
-    startJob: function(startIndex, endIndex) {
-      if (startIndex === endIndex) {
-        this.$refs.jobsOverview.refresh();
-        return;
-      } else {
-        this.startSingleJob(this.jobs[startIndex]).then(() => {
-          this.startJob(startIndex + 1, endIndex);
+        job.options = selectedAnalyzer.parameters.reduce((a, b) => {
+          const name = b.name;
+          a[name] = true;
+          return a;
+        }, {});
+
+        if (job.options.column) {
+          job.columns = [job.columns[0]];
+        }
+        if (job.options.secondColumn) {
+          job.columns.push("");
+        }
+        this.validateForm();
+      },
+      startSingleJob: function (jobAnalyzer) {
+        let requestObject = {
+          context: this.context,
+          table: this.selectedTable,
+          where: jobAnalyzer.where ? jobAnalyzer.where : null,
+          instance: jobAnalyzer.instance,
+          predicate: jobAnalyzer.predicate,
+          patternMatch: jobAnalyzer.patternMatch
+        };
+
+        if (jobAnalyzer.options.column) {
+          requestObject.column = jobAnalyzer.columns[0];
+        } else if (jobAnalyzer.options.columns) {
+          requestObject.columns = jobAnalyzer.columns;
+        } else if (jobAnalyzer.key == "correlation") {
+          requestObject.firstColumn = jobAnalyzer.columns[0];
+          requestObject.secondColumn = jobAnalyzer.columns[1];
+          console.log(requestObject);
+        }
+        console.log("requestObject: ", requestObject);
+        return axios.post(
+          `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
+          requestObject
+        );
+      },
+      startJob: function (startIndex, endIndex) {
+        if (startIndex === endIndex) {
+          this.$refs.jobsOverview.refresh();
+          return;
+        } else {
+          this.startSingleJob(this.jobs[startIndex]).then(() => {
+            this.startJob(startIndex + 1, endIndex);
+          });
+        }
+      },
+      startJobs: function () {
+        if (this.validateForm() === true) {
+          console.log("Form is valid!");
+          this.startJob(0, this.jobs.length);
+        } else {
+          console.log("Form is invalid!");
+        }
+      },
+      validateForm() {
+        this.areFieldsValid = [];
+        let everythingValid = true;
+
+        // console.log("Jobs:", this.jobs);
+        for (let i = 0; i < this.jobs.length; i++) {
+          this.areFieldsValid.push([]);
+
+          for (let j = 0; j < this.jobs[i].columns.length; j++) {
+            if (this.jobs[i].columns[j] === "") {
+              this.areFieldsValid[i].push(false);
+              everythingValid = false;
+            } else {
+              this.areFieldsValid[i].push(true);
+            }
+          }
+
+          if(this.jobs[i].key === "patternMatch"){
+            this.jobs[i].patternMatch
+              ? this.areFieldsValid[i].push(true)
+              : this.areFieldsValid[i].push(false);
+          }
+          else if(this.jobs[i].key === "compliance"){
+            everythingValid = true;
+            this.jobs[i].instance
+              ? this.areFieldsValid[i][0] = true
+              : this.areFieldsValid[i][0] = false;
+
+            this.jobs[i].predicate
+              ? this.areFieldsValid[i].push(true)
+              : this.areFieldsValid[i].push(false);
+          }
+        }
+        return everythingValid;
+      },
+      copyJob: function () {
+        this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
+        this.validateForm();
+      },
+      removeJob: function (index) {
+        this.jobs.splice(index, 1);
+        this.validateForm();
+      },
+      removeLastColumn(job) {
+        if (job.columns.length > 1) {
+          job.columns.splice(-1, 1);
+        }
+        this.validateForm();
+      },
+      addColumn(job) {
+        job.columns.push("");
+        this.validateForm();
+      },
+      clearColumns: function(){
+        this.jobs.forEach(function(job){
+          job.columns = [];
         });
-      }
+        this.validateForm();
+      },
     },
-    startJobs: function() {
-      if (this.validateForm() === true) {
-        this.startJob(0, this.jobs.length);
-      } else {
-        console.log("Form is invalid!");
-      }
+    mounted() {
+      axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
+        this.analyzers = response.data.analyzers;
+        this.jobs[0].key = this.analyzers[0].key;
+
+      });
+      axios.get("http://localhost:8080/api/db/data").then(response => {
+        this.data = response.data;
+        this.selectedTable = this.data[0].table;
+      });
     },
-    validateForm() {
-      // this.areFieldsValid = [true, true];
-      // this.jobs[0].selectedAnalyzer.table === ""
-      //   ? (this.areFieldsValid[0] = false)
-      //   : (this.areFieldsValid[0] = true);
-      // this.jobs[0].selectedAnalyzer.column === ""
-      //   ? (this.areFieldsValid[1] = false)
-      //   : (this.areFieldsValid[1] = true);
-      // for (let i = 0; i < this.jobs.length; i++) {
-      //   this.areFieldsValid.push([]);
-      //   if (this.jobs[i].selectedAnalyzer.key === "compliance") {
-      //     this.jobs[i].selectedAnalyzer.instance
-      //       ? this.areFieldsValid[i + 2].push(true)
-      //       : this.areFieldsValid[i + 2].push(false);
-      //     this.jobs[i].selectedAnalyzer.predicate
-      //       ? this.areFieldsValid[i + 2].push(true)
-      //       : this.areFieldsValid[i + 2].push(false);
-      //   } else if (this.jobs[i].selectedAnalyzer.key === "patternMatch") {
-      //     this.jobs[i].selectedAnalyzer.patternMatch
-      //       ? this.areFieldsValid[i + 2].push(true)
-      //       : this.areFieldsValid[i + 2].push(false);
-      //   }
-      // }
-      // if (
-      //   this.areFieldsValid[0] === false ||
-      //   this.areFieldsValid[1] === false
-      // ) {
-      //   return false;
-      // }
-      // for (let i = 2; i < this.areFieldsValid.length; i++) {
-      //   for (let j = 0; j < this.areFieldsValid[i].length; j++) {
-      //     if (this.areFieldsValid[i][j] === false) return false;
-      //   }
-      // }
-      return true;
-    },
-    copyJob: function() {
-      this.jobs.push(JSON.parse(JSON.stringify(this.jobs[0])));
-      this.areFieldsValid.push([]);
-    },
-    removeJob: function(index) {
-      this.jobs.splice(index, 1);
-    },
-    removeLastColumn(job) {
-      if (job.columns.length > 1) {
-        job.columns.splice(-1, 1);
-      }
-    },
-    addColumn(job) {
-      job.columns.push("");
-    }
-  },
-  mounted() {
-    axios.get("http://localhost:8080/api/jobs/analyzers").then(response => {
-      this.analyzers = response.data.analyzers;
-    });
-    axios.get("http://localhost:8080/api/db/data").then(response => {
-      this.data = response.data;
-      this.selectedTable = this.data[0].table;
-    });
-  },
-  watch: {
+    watch: {
       selectedTable: function () {
         this.data.forEach(tabledata => {
-          if (tabledata.table == this.selectedTable){
+          if (tabledata.table == this.selectedTable) {
             this.columns = tabledata.columns;
           }
         })
       }
     },
-  computed: {
-      pageUrl () {
+    computed: {
+      pageUrl() {
         return "https://github.com/hpi-bp1819-naumann/deequ/wiki/Analyzers";
       }
     }
-};
+  };
 </script>
 
 <style>
-.job-selection {
-  padding: 20px;
-}
+  .job-selection {
+    padding: 20px;
+  }
 
-.add-column {
-  padding-top: 13px;
-}
+  .add-column {
+    padding-top: 13px;
+  }
 
-.md-tooltip {
-  height: auto;
-}
+  .md-tooltip {
+    height: auto;
+  }
 
-.error-message{
-  color: #ff1744;
-  height: 100%;
-  vertical-align: middle;
-  line-height: 76px;
-}
+  .error-message {
+    color: #ff1744;
+    height: 100%;
+    vertical-align: middle;
+    line-height: 76px;
+  }
 </style>

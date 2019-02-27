@@ -8,27 +8,27 @@
     </div>
 
     <div class="md-layout">
-      <div class="md-layout-item md-size-10 column-left">Status:</div>
+      <div class="md-layout-item md-size-15 column-left">Status:</div>
       <div class="md-layout-item md-size-30 column-right">{{this.job.status}}</div>
     </div>
 
     <div class="md-layout" v-for="(value, param) in job.params" v-bind:key="param">
-      <div class="md-layout-item md-size-10 column-left">{{param}}:</div>
+      <div class="md-layout-item md-size-15 column-left">{{param}}:</div>
       <div class="md-layout-item md-size-30 column-right">{{value ? value : "Not defined"}}</div>
     </div>
 
     <div class="md-layout">
-      <div class="md-layout-item md-size-10 column-left">Started:</div>
+      <div class="md-layout-item md-size-15 column-left">Started:</div>
       <div class="md-layout-item md-size-30 column-right">{{this.job.startingTime.toLocaleString()}}</div>
     </div>
 
     <div class="md-layout" v-if="job.status === 'completed'">
-      <div class="md-layout-item md-size-10 column-left">Finished:</div>
+      <div class="md-layout-item md-size-15 column-left">Finished:</div>
       <div class="md-layout-item md-size-30 column-right"> {{this.job.finishingTime.toLocaleString()}}</div>
     </div>
 
     <div class="md-layout" v-if="job.status === 'completed'">
-      <div class="md-layout-item md-size-10 column-left">Duration:</div>
+      <div class="md-layout-item md-size-15 column-left">Duration:</div>
       <div class="md-layout-item md-size-30 column-right"> {{msToTime(this.job.finishingTime - this.job.startingTime)}}</div>
     </div>
 
@@ -43,11 +43,10 @@
         <histogram :frequencies="job.result.values" type="pie"></histogram>
       </div>
 
-      <div  v-else class="md-layout">
-        <div class="md-layout-item md-size-10 column-left resultcolumn">Result:</div>
-        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result}}</div>
+      <div class="md-layout" v-else>
+        <div class="md-layout-item md-size-15 column-left resultcolumn">Result:</div>
+        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result.value}}</div>
       </div>
-
       <md-button v-if="job.query" class="md-dense md-raised md-primary" @click="executeQuery()">
         Execute Query
       </md-button>

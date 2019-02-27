@@ -92,9 +92,8 @@
           </md-field>
         </div>
 
-        <div class="md-layout md-gutter" v-if="job.options.columns">
-          <div
-            class="md-layout-item md-size-20"
+          <div class="md-layout-item md-size-20"
+               v-if="job.options.columns"
             v-for="(column, index) in job.columns"
             v-bind:key="index">
             <md-field :class="{'md-invalid': !areFieldsValid[1]}">
@@ -107,17 +106,19 @@
               <span class="md-error" v-if="!areFieldsValid[1]">This field is required</span>
             </md-field>
           </div>
-          <div v-if="job.columns.length > 1" class="add-column">
-            <md-button class="md-icon-button" @click="removeLastColumn(job)">
-              <i class="fas fa-minus"></i>
-            </md-button>
+
+          <div v-if="job.options.columns" class="md-layout">
+            <div v-if="job.columns.length > 1" class="add-column">
+              <md-button class="md-icon-button" @click="removeLastColumn(job)">
+                <i class="fas fa-minus"></i>
+              </md-button>
+            </div>
+            <div class="add-column">
+              <md-button class="md-icon-button" @click="addColumn(job)">
+                <i class="fas fa-plus"></i>
+              </md-button>
+            </div>
           </div>
-          <div class="add-column">
-            <md-button class="md-icon-button" @click="addColumn(job)">
-              <i class="fas fa-plus"></i>
-            </md-button>
-          </div>
-        </div>
 
         <div class="md-layout-item md-size-20" v-if="job.options.instance">
           <md-field :class="{'md-invalid': !areFieldsValid[jobIndex+2][0]}">

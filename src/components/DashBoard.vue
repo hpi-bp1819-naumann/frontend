@@ -25,6 +25,11 @@
       <div class="md-layout-item md-size-20">
         <md-button class="md-dense md-raised md-primary" @click="changeDB">change</md-button>
       </div>
+
+      <md-dialog-alert
+        :md-active.sync="showConnectionChangedDialogue"
+        md-content="Database Connection Updated!"
+        md-confirm-text="Accept" />
     </div>
   </div>
 
@@ -39,7 +44,8 @@
       return {
         url: "",
         username: "",
-        password: ""
+        password: "",
+        showConnectionChangedDialogue: false,
       };
     },
     mounted() {
@@ -52,6 +58,7 @@
     },
     methods: {
       changeDB: function () {
+        this.showConnectionChangedDialogue = true;
         axios.post("http://localhost:8080/api/settings/uri", {"uri": this.url}).then(response => {
           console.log(response);
         });

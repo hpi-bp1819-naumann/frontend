@@ -132,7 +132,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .custom-md-list {
   background-color: transparent !important;
 }

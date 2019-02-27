@@ -193,7 +193,6 @@ export default {
   name: "JobSelection",
   data() {
     return {
-      test: "",
       areFieldsValid: [true, true, []], // 0 tableName, 1 columnName, 2+ [] Array of Values for field
       analyzers: [],
       contexts: ["jdbc", "spark"],
@@ -242,7 +241,7 @@ export default {
       let requestObject = {
         context: this.context,
         table: this.selectedTable,
-        where: jobAnalyzer.where,
+        where: jobAnalyzer.where ? jobAnalyzer.where : null,
         instance: jobAnalyzer.instance,
         predicate: jobAnalyzer.predicate,
         patternMatch: jobAnalyzer.patternMatch

@@ -35,19 +35,18 @@
     <div v-if="job.status === 'completed'">
       <div v-if="job.name === 'Histogram'">
         <br>
-        <histogram :frequencies="job.result.value.values" type="bar"></histogram>
+        <histogram :frequencies="job.result.values" type="bar"></histogram>
       </div>
 
       <div v-else-if="job.name === 'DataType'">
         <br>
-        <histogram :frequencies="job.result.value.values" type="pie"></histogram>
+        <histogram :frequencies="job.result.values" type="pie"></histogram>
       </div>
 
       <div class="md-layout" v-else>
         <div class="md-layout-item md-size-15 column-left resultcolumn">Result:</div>
         <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result.value}}</div>
       </div>
-
       <md-button v-if="job.query" class="md-dense md-raised md-primary" @click="executeQuery()">
         Execute Query
       </md-button>
@@ -67,6 +66,12 @@
         </md-table>
       </div>
     </div>
+    <div v-else-if="job.status === 'error'">
+      <div class="md-layout" >
+        <div class="md-layout-item md-size-10 column-left resultcolumn">Error:</div>
+        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.errorMessage}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -84,6 +89,7 @@
           status: "",
           name: "",
           result: {},
+          errorMessage: "",
           startingTime: "",
           finishingTime: "",
           params: {},

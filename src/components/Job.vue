@@ -45,7 +45,7 @@
 
       <div class="md-layout" v-else>
         <div class="md-layout-item md-size-15 column-left resultcolumn">Result:</div>
-        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result.value}}</div>
+        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result}}</div>
       </div>
       <md-button v-if="job.query" class="md-dense md-raised md-primary" @click="executeQuery()">
         Execute Query

@@ -52,7 +52,7 @@
     <div v-else-if="analyzer.status === 'error'">
       <div class="md-layout" >
         <div class="md-layout-item md-size-10 column-left resultcolumn">Error:</div>
-        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.analyzer.errorMessage}}</div>
+        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.analyzer.result}}</div>
       </div>
     </div>
   </div>

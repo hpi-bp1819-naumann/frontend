@@ -59,11 +59,11 @@
                   <i v-else class="fas fa-times"></i>
                   &nbsp;
                   <span class="md-list-item-text">
-                    {{analyzer.params.analyzer}} 
-                    <i class="fas fa-question" @click="openExplanationPage(analyzer.params.analyzer)"></i> </span>
+                    {{analyzer.name}} 
+                    <i class="fas fa-question" @click="openExplanationPage(analyzer.name)"></i> </span>
                   <div v-if="analyzer.status === 'completed'">
-                    <span v-if="analyzer.params.analyzer === 'histogram'" class="md-list-item-text">Result: too long</span>
-                    <span v-else-if="analyzer.params.analyzer === 'dataType'" class="md-list-item-text">
+                    <span v-if="analyzer.name === 'Histogram'" class="md-list-item-text">Result: too long</span>
+                    <span v-else-if="analyzer.name === 'DataType'" class="md-list-item-text">
                       Result: {{getMaximumAbsoluteValue(analyzer.result)}}
                     </span>
                     <span v-else class="md-list-item-text"> Result: {{analyzer.result}} </span>
@@ -139,6 +139,7 @@ export default {
         this.completedJobs = jobs
           .filter(job => job.status === "completed")
           .map(job => {
+            job.startingTime = new Date(job.startingTime);
             job.finishingTime = new Date(job.finishingTime);
             return job;
           })
@@ -182,14 +183,13 @@ export default {
       this.jobId = jobId;
       this.showDialog = true;
     },
-    showJobDetails(job) {
-      const jobToShow = JSON.parse(JSON.stringify(job));
+    showJobDetails(jobToShow) {
       this.showJob = true;
       this.toShow = jobToShow;
       this.showDialog = true;
     },
     showAnalyzerDetails(analyzer) {
-      // workaround for observer
+      // workaround for observer on analyzer
       // TODO: find out why it is necessary
       const analyzerToShow = JSON.parse(JSON.stringify(analyzer));
       this.showJob = false;

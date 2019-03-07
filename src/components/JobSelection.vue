@@ -172,7 +172,7 @@
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-20">
           <md-button @click="copyJob" class="md-dense md-raised">
-            <i class="fas fa-plus"></i> Add Job
+            <i class="fas fa-plus"></i> Add Analyzer
           </md-button>
         </div>
         <md-button type="submit" class="md-dense md-raised md-primary">Start Job</md-button>
@@ -251,12 +251,13 @@
           let requestObject = {
             analyzer: job.key,
             instance: job.instance,
+            where: job.where ? job.where : null,
             predicate: job.predicate,
             patternMatch: job.patternMatch
           };
-          if (job.where) {
+          /*(job.where) {
             requestObject.where = job.where;
-          }
+          }*/
           if (job.options.column) {
             requestObject.column = job.columns[0];
           } else if (job.options.columns) {

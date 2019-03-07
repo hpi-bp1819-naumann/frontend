@@ -9,6 +9,8 @@ import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
 import Vuelidate from "vuelidate";
 
+import './assets/css/dialog.css'
+
 Vue.use(VueMaterial);
 Vue.use(Vuelidate);
 

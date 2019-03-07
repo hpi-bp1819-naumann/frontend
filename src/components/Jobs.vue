@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-
+  
   <div v-if="failedJobs.length > 0">
       <div class="md-display-2" id="pending">Failed Jobs</div>
       <div class="md-layout md-gutter">
@@ -55,12 +55,22 @@
 
               <md-list slot="md-expand">
                 <md-list-item class="md-inset" v-for="(analyzer, index) in job.analyzers" :key="index">
-                  <span class="md-list-item-text">{{index + 1}}. {{analyzer.params.analyzer}} <i class="fas fa-question" @click="openExplanationPage(analyzer.params.analyzer)"></i> </span>
-                  <span v-if="analyzer.params.analyzer === 'histogram'" class="md-list-item-text">Result: too long</span>
-                  <span v-else-if="analyzer.params.analyzer === 'dataType'" class="md-list-item-text">
-                    Result: {{getMaximumAbsoluteValue(analyzer.result)}}
-                  </span>
-                  <span v-else class="md-list-item-text"> Result: {{analyzer.result}} </span>
+                  <i v-if="analyzer.status === 'completed'" class="fas fa-check"></i>
+                  <i v-else class="fas fa-times"></i>
+                  &nbsp;
+                  <span class="md-list-item-text">
+                    {{analyzer.params.analyzer}} 
+                    <i class="fas fa-question" @click="openExplanationPage(analyzer.params.analyzer)"></i> </span>
+                  <div v-if="analyzer.status === 'completed'">
+                    <span v-if="analyzer.params.analyzer === 'histogram'" class="md-list-item-text">Result: too long</span>
+                    <span v-else-if="analyzer.params.analyzer === 'dataType'" class="md-list-item-text">
+                      Result: {{getMaximumAbsoluteValue(analyzer.result)}}
+                    </span>
+                    <span v-else class="md-list-item-text"> Result: {{analyzer.result}} </span>
+                  </div>
+                  <md-button class="md-icon-button" @click="visitAnalyzerDetails(analyzer)">
+                    <i class="fas fa-search"></i>
+                  </md-button>
                 </md-list-item>
               </md-list>
 

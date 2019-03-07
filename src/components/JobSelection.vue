@@ -94,19 +94,20 @@
           </md-field>
         </div>
 
+        <div v-if="job.options.columns">
+          <div class="md-layout-item md-size-20" v-for="(column, index) in job.columns"
+              v-bind:key="index">
+            <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][index]}">
+              <label>Column {{index+1}}</label>
 
-        <div class="md-layout-item md-size-20" v-if="job.options.columns" v-for="(column, index) in job.columns"
-             v-bind:key="index">
-          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][index]}">
-            <label>Column {{index+1}}</label>
-
-            <md-select v-model="job.columns[index]" @md-selected="validateForm">
-              <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
-                {{ item.name }}
-              </md-option>
-            </md-select>
-            <span class="md-error" v-if="!areFieldsValid[jobIndex][index]">This field is required</span>
-          </md-field>
+              <md-select v-model="job.columns[index]" @md-selected="validateForm">
+                <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
+                  {{ item.name }}
+                </md-option>
+              </md-select>
+              <span class="md-error" v-if="!areFieldsValid[jobIndex][index]">This field is required</span>
+            </md-field>
+          </div>
         </div>
 
         <div v-if="job.options.columns" class="md-layout">
@@ -241,48 +242,42 @@
         }
         this.validateForm();
       },
-      startSingleJob: function (jobAnalyzer) {
-        let requestObject = {
-          context: this.context,
-          table: this.selectedTable,
-          where: jobAnalyzer.where ? jobAnalyzer.where : null,
-          instance: jobAnalyzer.instance,
-          predicate: jobAnalyzer.predicate,
-          patternMatch: jobAnalyzer.patternMatch
-        };
-
-        if (jobAnalyzer.options.column) {
-          requestObject.column = jobAnalyzer.columns[0];
-        } else if (jobAnalyzer.options.columns) {
-          requestObject.columns = jobAnalyzer.columns;
-        } else if (jobAnalyzer.key == "correlation") {
-          requestObject.firstColumn = jobAnalyzer.columns[0];
-          requestObject.secondColumn = jobAnalyzer.columns[1];
-          console.log(requestObject);
-        }
-        console.log("requestObject: ", requestObject);
-        return axios.post(
-          `http://localhost:8080/api/jobs/${jobAnalyzer.key}/start`,
-          requestObject
-        );
-      },
-      startJob: function (startIndex, endIndex) {
-        if (startIndex === endIndex) {
-          this.$refs.jobsOverview.refresh();
-          return;
-        } else {
-          this.startSingleJob(this.jobs[startIndex]).then(() => {
-            this.startJob(startIndex + 1, endIndex);
-          });
-        }
-      },
       startJobs: function () {
-        if (this.validateForm() === true) {
-          console.log("Form is valid!");
-          this.startJob(0, this.jobs.length);
-        } else {
-          console.log("Form is invalid!");
+        if (this.validateForm() !== true) {
+          return;
         }
+
+        const analyzers = this.jobs.map(job => {
+          let requestObject = {
+            analyzer: job.key,
+            instance: job.instance,
+            predicate: job.predicate,
+            patternMatch: job.patternMatch
+          };
+          if (job.where) {
+            requestObject.where = job.where;
+          }
+          if (job.options.column) {
+            requestObject.column = job.columns[0];
+          } else if (job.options.columns) {
+            requestObject.columns = job.columns;
+          } else if (job.key == "correlation") {
+            requestObject.firstColumn = job.columns[0];
+            requestObject.secondColumn = job.columns[1];
+          }
+
+          return requestObject;
+        });
+        const postData = {
+          analyzers
+        };
+        
+        axios.post(
+          `http://localhost:8080/api/jobs/${this.selectedTable}/${this.context}/start`,
+          postData
+        ).then(function (response) {
+          this.$refs.jobsOverview.refresh();
+        });   
       },
       validateForm() {
         this.areFieldsValid = [];

@@ -39,20 +39,31 @@
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-80">
           <md-list class="custom-md-list">
-            <md-list-item v-for="(job, index) in completedJobs" :key="index">
-              <span class="md-list-item-text">{{index + 1}}. {{job.name}} <i class="fas fa-question" @click="openExplanationPage(job.name)"></i> </span>
+            <md-list-item v-for="(job, index) in completedJobs" :key="index" md-expand>
+              <span class="md-list-item-text">{{index + 1}}. {{job.name}}</span>
               <span class="md-list-item-text">Finished: {{job.finishingTime.toLocaleString()}}</span>
               
-              <span v-if="job.name === 'Histogram'" class="md-list-item-text">Result: too long</span>
-              <span v-else-if="job.name === 'DataType'" class="md-list-item-text">
-                Result: {{getMaximumAbsoluteValue(job.result.values)}}
-              </span>
-              <span v-else class="md-list-item-text"> Result: {{job.result}} </span>
+              <span>
+                <md-button class="md-icon-button" @click="visitToJobDetails(job.id)">
+                  <i class="fas fa-search"></i>
+                </md-button>
 
-              <md-button @click="visitToJobDetails(job.id)" class="md-dense md-raised">View Details</md-button>
-              <md-button class="md-icon-button" @click="deleteCompletedJob(job.id, index)">
-                <i class="fas fa-trash"></i>
-              </md-button>
+                <md-button class="md-icon-button" @click="deleteCompletedJob(job.id, index)">
+                  <i class="fas fa-trash"></i>
+                </md-button>
+              </span>
+
+              <md-list slot="md-expand">
+                <md-list-item class="md-inset" v-for="(analyzer, index) in job.analyzers" :key="index">
+                  <span class="md-list-item-text">{{index + 1}}. {{analyzer.params.analyzer}} <i class="fas fa-question" @click="openExplanationPage(analyzer.params.analyzer)"></i> </span>
+                  <span v-if="analyzer.params.analyzer === 'histogram'" class="md-list-item-text">Result: too long</span>
+                  <span v-else-if="analyzer.params.analyzer === 'dataType'" class="md-list-item-text">
+                    Result: {{getMaximumAbsoluteValue(analyzer.result)}}
+                  </span>
+                  <span v-else class="md-list-item-text"> Result: {{analyzer.result}} </span>
+                </md-list-item>
+              </md-list>
+
             </md-list-item>
           </md-list>
         </div>

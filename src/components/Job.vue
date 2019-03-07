@@ -1,8 +1,6 @@
 <template>
   <div>
-
-    <div class="md-display-2">Job Details</div>
-
+    <div class="md-display-2">{{this.job}} Job Details</div>
     <div>
       <div class="md-headline job-name">{{this.job.name}}</div>
     </div>
@@ -32,7 +30,7 @@
       <div class="md-layout-item md-size-30 column-right"> {{msToTime(this.job.finishingTime - this.job.startingTime)}}</div>
     </div>
 
-    <div v-if="job.status === 'completed'">
+    <div v-if="job.status === 'completed' && job.result">
       <div v-if="job.name === 'Histogram'">
         <br>
         <histogram :frequencies="job.result.values" type="bar"></histogram>
@@ -80,10 +78,11 @@
   import Histogram from "./Histogram";
 
   export default {
-    props: ["id"],
+    props: ["job"],
     name: "Job",
     data() {
       return {
+        /*
         job: {
           id: "",
           status: "",
@@ -96,6 +95,7 @@
           query: null
         },
         queryResult: null
+        */
       };
     },
     components: {
@@ -111,6 +111,7 @@
 
     methods: {
       fetchData() {
+        /*
         axios
           .get(`http://localhost:8080/api/jobs/${this.id}`)
           .then(resp => {
@@ -124,6 +125,7 @@
           .catch(err => {
             this.$router.push("/jobs");
           });
+          */
       },
       msToTime(duration) {
         var result = "";
@@ -156,7 +158,7 @@
     }
   };
 </script>
-<style>
+<style global>
   .job-name{
     margin-top: 10px;
     margin-bottom: 10px;

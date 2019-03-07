@@ -1,8 +1,6 @@
 <template>
   <div>
-
     <div class="md-display-2">Job Details</div>
-
     <div>
       <div class="md-headline job-name">{{this.job.name}}</div>
     </div>
@@ -12,9 +10,14 @@
       <div class="md-layout-item md-size-30 column-right">{{this.job.status}}</div>
     </div>
 
-    <div class="md-layout" v-for="(value, param) in job.params" v-bind:key="param">
-      <div class="md-layout-item md-size-15 column-left">{{param}}:</div>
-      <div class="md-layout-item md-size-30 column-right">{{value ? value : "Not defined"}}</div>
+    <div class="md-layout">
+      <div class="md-layout-item md-size-15 column-left">Table:</div>
+      <div class="md-layout-item md-size-30 column-right">{{this.job.table}}</div>
+    </div>
+
+    <div class="md-layout">
+      <div class="md-layout-item md-size-15 column-left">Context:</div>
+      <div class="md-layout-item md-size-30 column-right">{{this.job.context}}</div>
     </div>
 
     <div class="md-layout">
@@ -32,40 +35,6 @@
       <div class="md-layout-item md-size-30 column-right"> {{msToTime(this.job.finishingTime - this.job.startingTime)}}</div>
     </div>
 
-    <div v-if="job.status === 'completed'">
-      <div v-if="job.name === 'Histogram'">
-        <br>
-        <histogram :frequencies="job.result.values" type="bar"></histogram>
-      </div>
-
-      <div v-else-if="job.name === 'DataType'">
-        <br>
-        <histogram :frequencies="job.result.values" type="pie"></histogram>
-      </div>
-
-      <div class="md-layout" v-else>
-        <div class="md-layout-item md-size-15 column-left resultcolumn">Result:</div>
-        <div class="md-layout-item md-size-30 column-right resultcolumn"> {{this.job.result}}</div>
-      </div>
-      <md-button v-if="job.query" class="md-dense md-raised md-primary" @click="executeQuery()">
-        Execute Query
-      </md-button>
-
-      <div v-if="queryResult" class="md-layout-item">
-        <md-table md-card>
-          <md-table-row>
-            <md-table-head>index</md-table-head>
-            <md-table-head v-for="(item, index) in queryResult.columns" :value="item" :key="index">
-              {{item}}
-            </md-table-head>
-          </md-table-row>
-          <md-table-row v-for="(row, index) in queryResult.data" :value="row" :key="index">
-            <md-table-cell>{{index + 1}}</md-table-cell>
-            <md-table-cell v-for="(cell, index) in row" :value="cell" :key="index">{{cell}}</md-table-cell>
-          </md-table-row>
-        </md-table>
-      </div>
-    </div>
     <div v-else-if="job.status === 'error'">
       <div class="md-layout" >
         <div class="md-layout-item md-size-10 column-left resultcolumn">Error:</div>
@@ -80,52 +49,20 @@
   import Histogram from "./Histogram";
 
   export default {
-    props: ["id"],
+    props: ["job"],
     name: "Job",
     data() {
       return {
-        job: {
-          id: "",
-          status: "",
-          name: "",
-          result: {},
-          errorMessage: "",
-          startingTime: "",
-          finishingTime: "",
-          params: {},
-          query: null
-        },
-        queryResult: null
       };
     },
     components: {
       histogram: Histogram
     },
-    created() {
-      this.fetchData();
-    },
-
-    watch: {
-      $route: "fetchData"
-    },
-
     methods: {
-      fetchData() {
-        axios
-          .get(`http://localhost:8080/api/jobs/${this.id}`)
-          .then(resp => {
-            var job = resp.data.job;
-            job.startingTime = new Date(job.startingTime);
-            if (job.status === "completed") {
-              job.finishingTime = new Date(job.finishingTime);
-            }
-            this.job = job;
-          })
-          .catch(err => {
-            this.$router.push("/jobs");
-          });
-      },
       msToTime(duration) {
+        console.log(typeof this.job.startingTime);
+        console.log(this.job.finishingTime);
+        console.log(duration)
         var result = "";
         var milliseconds = parseInt(duration % 1000),
           seconds = parseInt((duration / 1000) % 60),
@@ -156,24 +93,3 @@
     }
   };
 </script>
-<style>
-  .job-name{
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-  .column-left{
-    font-size: 16px;
-    line-height: 20px;
-    margin-bottom: 4px;
-    margin-left: 11px;
-    font-weight: 500;
-  }
-
-  .resultcolumn{
-    margin-top: 16px;
-    font-size: 18px;
-    font-weight: 500;
-    margin-left: 0;
-    /*background-color: orange;*/
-  }
-</style>

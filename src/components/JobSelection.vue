@@ -273,12 +273,11 @@
           analyzers
         };
         
+        const jobsOverview = this.$refs.jobsOverview;
         axios.post(
           `http://localhost:8080/api/jobs/${this.selectedTable}/${this.context}/start`,
           postData
-        ).then(function (response) {
-          this.$refs.jobsOverview.refresh();
-        });   
+        ).then(() => jobsOverview.refresh());
       },
       validateForm() {
         this.areFieldsValid = [];

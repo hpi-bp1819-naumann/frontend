@@ -94,20 +94,18 @@
           </md-field>
         </div>
 
-        <div v-if="job.options.columns">
-          <div class="md-layout-item md-size-20" v-for="(column, index) in job.columns"
-              v-bind:key="index">
-            <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][index]}">
-              <label>Column {{index+1}}</label>
+        <div class="md-layout-item md-size-20" v-for="(column, index) in job.columns"
+            v-bind:key="index" v-show="job.options.columns">
+          <md-field :class="{'md-invalid': !areFieldsValid[jobIndex][index]}">
+            <label>Column {{index+1}}</label>
 
-              <md-select v-model="job.columns[index]" @md-selected="validateForm">
-                <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
-                  {{ item.name }}
-                </md-option>
-              </md-select>
-              <span class="md-error" v-if="!areFieldsValid[jobIndex][index]">This field is required</span>
-            </md-field>
-          </div>
+            <md-select v-model="job.columns[index]" @md-selected="validateForm">
+              <md-option v-for="(item, selectindex) in columns" :value="item.name" :key="selectindex">
+                {{ item.name }}
+              </md-option>
+            </md-select>
+            <span class="md-error" v-if="!areFieldsValid[jobIndex][index]">This field is required</span>
+          </md-field>
         </div>
 
         <div v-if="job.options.columns" class="md-layout">
@@ -234,6 +232,9 @@
           return a;
         }, {});
 
+        if (job.options.columns && job.columns.length === 0) {
+          job.columns = [""];
+        }
         if (job.options.column) {
           job.columns = [job.columns[0]];
         }

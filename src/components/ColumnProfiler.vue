@@ -142,8 +142,7 @@
         else{
             console.log(this.selectedTable);
             axios.post(
-                `http://localhost:8080/api/jobs/columnProfiler/start`,
-                {"context": this.context, "table": this.selectedTable}
+                `http://localhost:8080/api/jobs/${this.selectedTable}/startColumnProfiler`
             ).then(result => {
                 if (result.data.jobId){
                     this.jobId = result.data.jobId;
@@ -153,15 +152,12 @@
         }
       },
       refresh () {
-          axios.get(`http://localhost:8080/api/jobs/${this.jobId}`).then(response => {
-              console.log("Response:");
-              console.log(response.data.job.status);
-              if (response.data.job.status == "completed"){
-                  this.data = response.data.job.result;
-                  console.log(this.data);
+          axios.get(`http://localhost:8080/api/jobs/columnProfilerJobs/${this.jobId}`).then(response => {
+              if (response.data.result.status == "completed"){
+                  this.data = response.data.result.result;
                   this.running = false;
               }
-              else if (response.data.job.status != "running"){
+              else if (response.data.result.status != "running"){
                   this.running = false;
               }
           });
